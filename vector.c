@@ -12,7 +12,7 @@ Vector* new_vector(void)
 		return NULL;
 	}
 	vector->length = 0;
-	vector->capacity = 4;
+	vector->capacity = VECTOR_DEFAULT_SIZE;
 
 	return vector;
 }
@@ -84,7 +84,7 @@ FindReturn vector_find(const Vector* haystack, const void* needle, bool (*cmp)(c
 
 bool vector_insert(Vector* vector, size_t index, void* item)
 {
-	if(!vector_adjust_size(vector, ++vector->length))
+	if(!vector_adjust_size(vector, vector->length))
 		return false;
 
 	memmove(vector->items+index+1, vector->items+index, (vector->length-index)*sizeof(*vector->items));
