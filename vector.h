@@ -13,19 +13,14 @@ typedef struct Vector
 	size_t length;
 } Vector;
 
-typedef struct FindReturn
-{
-	bool found;
-	size_t index; //if found is false, this contains rubbish
-} FindReturn;
-
 Vector* new_vector(void);
 void* vector_at(const Vector* vector, size_t index);
 void* vector_pop(Vector* vector, size_t index);
 bool vector_push(Vector* vector, void* item);
-void vector_remove(Vector* vector, size_t index);
+void vector_remove(Vector* vector, size_t index, void (*rmv)(void*));
+void delete_vector(Vector* vector, void(*rmv) (void*));
 bool vector_adjust_size(Vector* vector, size_t size);
-FindReturn vector_find(const Vector* haystack, const void* needle, bool (*cmp)(const void*, const void*));
+size_t* vector_find(const Vector* haystack, const void* needle, bool (*cmp)(const void*, const void*));
 bool vector_insert(Vector* vector, size_t index, void* item);
 
 

@@ -13,18 +13,12 @@ typedef struct String
 	size_t length;
 } String;
 
-typedef struct FindReturn
-{
-	bool found;
-	size_t index; //if found is false, this contains rubbish
-} FindReturn;
-
 String* new_string(void);
 char string_at(const String* string, size_t index);
 bool string_append(String* string, char item);
 void string_remove(String* string, size_t index);
 bool string_adjust_size(String* string, size_t size);
-FindReturn string_find_char(const String* haystack, const char needle);
+size_t* string_find_char(const String* haystack, const char needle);
 bool string_insert(String* string, size_t index, char character);
 bool string_concat(String* string, String* other);
 

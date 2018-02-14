@@ -61,20 +61,19 @@ bool string_concat(String* string, String* other)
 	return true;
 }
 
-FindReturn string_find_char(const String* haystack, const char needle)
+size_t* string_find_char(const String* haystack, const char needle)
 {
-	FindReturn ret;
+	size_t* ret;
 	for(size_t i = 0; i < haystack->length; i++)
 	{
 		if(haystack->chars[i] == needle)
 		{
-			ret.found = true;
-			ret.index = i;
+			ret = malloc(sizeof(*ret));
+			*ret = i;
 			return ret;
 		}
 	}
-	ret.found = false;
-	return ret;
+	return NULL;
 }
 
 bool string_adjust_size(String* string, size_t size)

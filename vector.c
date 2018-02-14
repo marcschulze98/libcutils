@@ -38,11 +38,14 @@ void* vector_pop(Vector* vector, size_t index)
 	}
 }
 
-void vector_remove(Vector* vector, size_t index)
+void vector_remove(Vector* vector, size_t index, void (*rmv)(void*))
 {
 	if(index < vector->length)
 	{
-		free(vector->items[index]);
+		if(rmv)
+			rmv(vector->items[index]);
+		else
+			free(vector->items[index]);
 		memmove(vector->items+index, vector->items+index+1, (vector->length-index-1)*sizeof(*vector->items));
 		vector->length--;
 	}
@@ -56,30 +59,19 @@ bool vector_push(Vector* vector, void* item)
 	return true;
 }
 
-FindReturn vector_find(const Vector* haystack, const void* needle, bool (*cmp)(const void*, const void*))
+size_t* vector_find(const Vector* haystack, const void* needle, bool (*cmp)(const void*, const void*))
 {
-	FindReturn ret;
+	size_t* ret;
 	for(size_t i = 0; i < haystack->length; i++)
 	{
-		if(cmp)
+		if(cmp ? cmp(haystack->items[i],needle) : haystack->items[i] == needle)
 		{
-			if(cmp(haystack->items[i],needle))
-			{
-				ret.found = true;
-				ret.index = i;
-				return ret;
-			}
-		} else {
-			if(haystack->items[i] == needle)
-			{
-				ret.found = true;
-				ret.index = i;
-				return ret;
-			}
+			ret = malloc(sizeof(*ret));
+			*ret = i;
+			return ret;
 		}
 	}
-	ret.found = false;
-	return ret;
+	return NULL;
 }
 
 bool vector_insert(Vector* vector, size_t index, void* item)
@@ -118,4 +110,16 @@ bool vector_adjust_size(Vector* vector, size_t size)
 		vector->capacity /= 2;
 	}
 	return true;
+}
+
+void delete_vector(Vector* vector, void (*rmv)(void*))
+{
+	for(size_t i = 0; i < vector->length; i++)
+	{
+		if(rmv)
+			rmv(vector->items[i]);
+		else
+			free(vector->items[i]);
+	}
+	free(vector);
 }
