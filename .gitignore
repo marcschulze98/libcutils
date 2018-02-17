@@ -1,6 +1,9 @@
 # Prerequisites
 *.d
 
+#binaries
+test
+
 # Object files
 *.o
 *.ko
