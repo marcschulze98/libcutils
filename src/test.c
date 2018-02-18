@@ -98,4 +98,5 @@ int main(int argc, char** argv)
 {
 	test1();
 	test2();
+	sleep_ms(1000);
 }
