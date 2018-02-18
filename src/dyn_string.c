@@ -1,4 +1,4 @@
-#include "dyn_string.h"
+#include <cutils/dyn_string.h>
 
 String* new_string(void)
 {

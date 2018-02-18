@@ -1,8 +1,9 @@
+#build directories
+build/
+
+
 # Prerequisites
 *.d
-
-#binaries
-test
 
 # Object files
 *.o
