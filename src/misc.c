@@ -1,6 +1,6 @@
 #include <cutils/misc.h>
 
-void sleep_ms(int milliseconds)
+void sleep_ms(unsigned int milliseconds)
 {
     #ifdef __unix__
 		usleep(milliseconds * 1000);

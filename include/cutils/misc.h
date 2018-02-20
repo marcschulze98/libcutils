@@ -10,6 +10,6 @@
 	#include <windows.h>
 #endif
 
-void sleep_ms(int milliseconds);
+void sleep_ms(unsigned int milliseconds);
 uint32_t ntoh32(uint32_t const net);
 #endif //MISC_H
