@@ -24,6 +24,7 @@ void* vector_pop_at(Vector* vector, size_t index);
 
 bool vector_insert(Vector* vector, size_t index, void* item);
 #define vector_push(vector, item) vector_insert(vector, vector->length, item);
+
 void vector_remove(Vector* vector, size_t index, void (*rmv)(void*));
 
 bool vector_adjust_size(Vector* vector, size_t size);

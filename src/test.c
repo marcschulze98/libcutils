@@ -65,13 +65,16 @@ static void test1(void)
 
 static void test2(void)
 {
-	String* test = new_string();
+	String* test;
 	String* test2;
 	char* cstring;
-	string_append(test, 'a');
-	string_append(test, 'b');
-	string_append(test, 'c');
-	string_append(test, 'd');
+
+	test = new_string();
+
+	string_push(test, 'a');
+	string_push(test, 'b');
+	string_push(test, 'c');
+	string_push(test, 'd');
 	printf("%ld\n", test->length);
 
 	cstring = to_cstring(test);

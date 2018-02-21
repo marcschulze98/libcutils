@@ -1,10 +1,5 @@
 #include <cutils/dyn_string.h>
 
-String* new_string(void)
-{
-	return string_with_capacity(STRING_DEFAULT_SIZE);
-}
-
 String* string_with_capacity(size_t capacity)
 {
 	String* string = malloc(sizeof(*string));
@@ -20,11 +15,6 @@ String* string_with_capacity(size_t capacity)
 	string->capacity = capacity;
 
 	return string;
-}
-
-bool string_append(String* string, char character)
-{
-	return string_insert(string, string->length, character);
 }
 
 void string_remove(String* string, size_t index)
@@ -53,6 +43,18 @@ char string_at(const String* string, size_t index)
 		return '\0';
 	else
 		return string->chars[index];
+}
+
+char string_pop_at(String* string, size_t index)
+{
+	char tmp = string_at(string, index);
+	if(!tmp)
+	{
+		return '\0';
+	} else {
+		string_remove(string, index);
+		return tmp;
+	}
 }
 
 bool string_concat(String* string, const String* other)
@@ -95,7 +97,6 @@ bool string_adjust_size(String* string, size_t size)
 	}
 	return true;
 }
-
 
 
 void delete_string(String* string)
