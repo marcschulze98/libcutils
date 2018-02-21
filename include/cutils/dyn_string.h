@@ -32,7 +32,9 @@ size_t* string_find_char(const String* haystack, const char needle);
 
 bool string_concat(String* string, const String* other);
 String* from_cstring(const char* cstring);
+String* from_cstring_del(char* cstring);
 char* to_cstring(const String* string);
+char* to_cstring_del(String* string);
 
 
 #endif /* DYN_STRING_H */

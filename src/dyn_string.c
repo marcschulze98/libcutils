@@ -119,6 +119,13 @@ String* from_cstring(const char* cstring)
 
 }
 
+String* from_cstring_del(char* cstring)
+{
+	String* ret = from_cstring(cstring);
+	free(cstring);
+	return ret;
+}
+
 char* to_cstring(const String* string)
 {
 	char* cstring = malloc(string->length+1);
@@ -126,4 +133,11 @@ char* to_cstring(const String* string)
 	cstring[string->length] = '\0';
 
 	return cstring;
+}
+
+char* to_cstring_del(String* string)
+{
+	char* ret = to_cstring(string);
+	delete_string(string);
+	return ret;
 }
