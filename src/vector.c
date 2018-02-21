@@ -1,10 +1,5 @@
 #include <cutils/vector.h>
 
-Vector* new_vector(void)
-{
-	return vector_with_capacity(VECTOR_DEFAULT_SIZE);
-}
-
 Vector* vector_with_capacity(size_t capacity)
 {
 	Vector* vector = malloc(sizeof(*vector));
@@ -28,11 +23,6 @@ void* vector_at(const Vector* vector, size_t index)
 		return NULL;
 	else
 		return vector->items[index];
-}
-
-void* vector_pop(Vector* vector)
-{
-	return vector_pop_at(vector, vector->length-1);
 }
 
 void* vector_pop_at(Vector* vector, size_t index)
@@ -59,15 +49,12 @@ void vector_remove(Vector* vector, size_t index, void (*rmv)(void*))
 	}
 }
 
-bool vector_push(Vector* vector, void* item)
-{
-	return vector_insert(vector, vector->length, item);
-}
-
 size_t* vector_find(const Vector* haystack, const void* needle, int (*cmp)(const void*, const void*))
 {
 	size_t* ret;
-	for(size_t i = 0; i < haystack->length; i++)
+	size_t i;
+
+	for(i = 0; i < haystack->length; i++)
 	{
 		if(cmp ? cmp(haystack->items[i],needle) == 0 : haystack->items[i] == needle)
 		{
@@ -124,7 +111,8 @@ bool vector_shrink(Vector* vector)
 
 void delete_vector(Vector* vector, void (*rmv)(void*))
 {
-	for(size_t i = 0; i < vector->length; i++)
+	size_t i;
+	for(i = 0; i < vector->length; i++)
 	{
 		if(rmv)
 			rmv(vector->items[i]);

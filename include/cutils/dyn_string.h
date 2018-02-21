@@ -1,5 +1,6 @@
 #ifndef DYN_STRING_H
 #define DYN_STRING_H
+
 #define STRING_DEFAULT_SIZE 8
 #include <stdint.h>
 #include <stdlib.h>
@@ -32,4 +33,4 @@ String* from_cstring(const char* cstring);
 char* to_cstring(const String* string);
 
 
-#endif //DYN_STRING_H
+#endif /* DYN_STRING_H */

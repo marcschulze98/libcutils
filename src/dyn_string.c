@@ -67,7 +67,8 @@ bool string_concat(String* string, const String* other)
 size_t* string_find_char(const String* haystack, const char needle)
 {
 	size_t* ret;
-	for(size_t i = 0; i < haystack->length; i++)
+	size_t i;
+	for(i = 0; i < haystack->length; i++)
 	{
 		if(haystack->chars[i] == needle)
 		{

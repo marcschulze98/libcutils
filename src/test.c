@@ -7,18 +7,22 @@ struct test
 	int b;
 };
 
-int cmp_str(const void* str1, const void* str2)
+static int cmp_str(const void* str1, const void* str2)
 {
 	const struct test* str1_s = str1;
 	const struct test* str2_s = str2;
 	return !((str1_s->a == str2_s->a) && (str1_s->b == str2_s->b));
 }
 
-void test1(void)
+static void test1(void)
 {
-	Vector* test = new_vector();
+	size_t* find;
+	Vector* test;
+	struct test* my_struct;
 
-	struct test* my_struct = malloc(sizeof(*my_struct));
+	my_struct = malloc(sizeof(*my_struct));
+	test = new_vector()
+
 	my_struct->a = 5;
 	my_struct->b = 5;
 	vector_push(test, my_struct);
@@ -47,7 +51,7 @@ void test1(void)
 	my_struct->a = 8;
 	my_struct->b = 8;
 
-	size_t* find = vector_find(test, my_struct, cmp_str);
+	find = vector_find(test, my_struct, cmp_str);
 	printf("pos: %lu\n", *find);
 	free(find);
 
@@ -59,16 +63,18 @@ void test1(void)
 	delete_vector(test,free);
 }
 
-void test2(void)
+static void test2(void)
 {
 	String* test = new_string();
+	String* test2;
+	char* cstring;
 	string_append(test, 'a');
 	string_append(test, 'b');
 	string_append(test, 'c');
 	string_append(test, 'd');
 	printf("%ld\n", test->length);
 
-	char* cstring = to_cstring(test);
+	cstring = to_cstring(test);
 	printf("%s\n", cstring);
 	free(cstring);
 
@@ -83,7 +89,7 @@ void test2(void)
 	printf("%s\n", cstring);
 	free(cstring);
 
-	String* test2 = from_cstring("xyz");
+	test2 = from_cstring("xyz");
 
 	string_concat(test,test2);
 	cstring = to_cstring(test);
@@ -99,4 +105,5 @@ int main(int argc, char** argv)
 	test1();
 	test2();
 	sleep_ms(1000);
+	return 0;
 }
