@@ -1,5 +1,6 @@
 #include <cutils/cutils.h>
 #include <stdio.h>
+#include <assert.h>
 
 struct test
 {
@@ -36,28 +37,29 @@ static void test1(void)
 	my_struct->a = 7;
 	my_struct->b = 7;
 	vector_push(test, my_struct);
-	printf("%ld\n", test->length);
+	assert(test->length == 3);
 
 	vector_remove(test, 0,free);
-	printf("%ld\n", test->length);
+	assert(test->length == 2);
 
 	my_struct = malloc(sizeof(*my_struct));
 	my_struct->a = 8;
 	my_struct->b = 8;
 	vector_insert(test, 2, my_struct);
-	printf("%ld\n", test->length);
+	assert(test->length == 3);
 
 	my_struct = malloc(sizeof(*my_struct));
 	my_struct->a = 8;
 	my_struct->b = 8;
 
 	find = vector_find(test, my_struct, cmp_str);
-	printf("pos: %lu\n", *find);
+
+	assert(*find == 2);
 	free(find);
 
 	free(my_struct);
 	my_struct = vector_pop(test);
-	printf("struct a: %d, b: %d\n", my_struct->a, my_struct->b);
+	assert(my_struct->a == 8 && my_struct->b == 8);
 	free(my_struct);
 
 	delete_vector(test,free);
@@ -75,28 +77,28 @@ static void test2(void)
 	string_push(test, 'b');
 	string_push(test, 'c');
 	string_push(test, 'd');
-	printf("%ld\n", test->length);
+	assert(test->length == 4);
 
 	cstring = to_cstring(test);
-	printf("%s\n", cstring);
+	assert(strcmp(cstring, "abcd") == 0);
 	free(cstring);
 
 	string_remove(test, 3);
 	cstring = to_cstring(test);
-	printf("%s\n", cstring);
+	assert(strcmp(cstring, "abc") == 0);
 	free(cstring);
-	printf("%ld\n", test->length);
+	assert(test->length == 3);
 
 	string_insert(test, 0,'a');
 	cstring = to_cstring(test);
-	printf("%s\n", cstring);
+	assert(strcmp(cstring, "aabc") == 0);
 	free(cstring);
 
 	test2 = from_cstring("xyz");
 
 	string_concat(test,test2);
 	cstring = to_cstring(test);
-	printf("%s\n", cstring);
+	assert(strcmp(cstring, "aabcxyz") == 0);
 	free(cstring);
 
 	delete_string(test2);
