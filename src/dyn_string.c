@@ -22,7 +22,7 @@ void string_remove(String* string, size_t index)
 	if(index < string->length)
 	{
 		memmove(string->chars+index, string->chars+index+1, (string->length-index-1)*sizeof(*string->chars));
-		string->length--;
+		--string->length;
 	}
 }
 

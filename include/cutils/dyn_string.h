@@ -14,16 +14,16 @@ typedef struct String
 	size_t length;
 } String;
 
-#define new_string() string_with_capacity(STRING_DEFAULT_SIZE);
+#define new_string() string_with_capacity(STRING_DEFAULT_SIZE)
 String* string_with_capacity(size_t capacity);
 void delete_string(String* string);
 
 char string_at(const String* string, size_t index);
-#define string_pop(string) string_pop_at(string, string->length-1);
+#define string_pop(string) string_pop_at(string, string->length-1)
 char string_pop_at(String* string, size_t index);
 
 bool string_insert(String* string, size_t index, char character);
-#define string_push(string, character) string_insert(string, string->length, character);
+#define string_push(string, character) string_insert(string, string->length, character)
 
 void string_remove(String* string, size_t index);
 

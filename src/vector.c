@@ -45,7 +45,7 @@ void vector_remove(Vector* vector, size_t index, void (*rmv)(void*))
 		if(rmv)
 			rmv(vector->items[index]);
 		memmove(vector->items+index, vector->items+index+1, (vector->length-index-1)*sizeof(*vector->items));
-		vector->length--;
+		--vector->length;
 	}
 }
 
@@ -56,7 +56,7 @@ size_t* vector_find(const Vector* haystack, const void* needle, int (*cmp)(const
 
 	for(i = 0; i < haystack->length; i++)
 	{
-		if(cmp ? cmp(haystack->items[i],needle) == 0 : haystack->items[i] == needle)
+		if(cmp(haystack->items[i],needle) == 0)
 		{
 			ret = malloc(sizeof(*ret));
 			*ret = i;
@@ -111,11 +111,13 @@ bool vector_shrink(Vector* vector)
 
 void delete_vector(Vector* vector, void (*rmv)(void*))
 {
-	size_t i;
-	for(i = 0; i < vector->length; i++)
+	if(rmv)
 	{
-		if(rmv)
+		size_t i;
+		for(i = 0; i < vector->length; i++)
+		{
 			rmv(vector->items[i]);
+		}
 	}
 	free(vector->items);
 	free(vector);

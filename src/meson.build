@@ -1,4 +1,4 @@
-src = ['vector.c', 'dyn_string.c', 'misc.c']
+src = ['vector.c', 'dyn_string.c', 'misc.c', 'byte_array.c']
 srctest = src + ['test.c']
 
 cutils_lib = library('cutils', src, include_directories : inc, install: true)

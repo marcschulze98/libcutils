@@ -4,5 +4,7 @@
 #include <cutils/vector.h>
 #include <cutils/dyn_string.h>
 #include <cutils/misc.h>
+#include <cutils/byte_array.h>
+
 
 #endif /* CUTILS_H */
