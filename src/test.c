@@ -177,7 +177,6 @@ static void test3(void)
 
 	my_struct.a = 2;
 	my_struct.b = 2;
-	printf("%d\n", my_structptr->a);
 	assert(my_structptr->a == my_struct.a);
 	assert(my_structptr->b == my_struct.b);
 	free(my_structptr);
@@ -188,11 +187,62 @@ static void test3(void)
 
 }
 
+static void test4(void)
+{
+	struct timespec ts1 = {10, 10};
+	struct timespec ts2 = {10, 10};
+	struct timespec res;
+
+	res = timespec_add(&ts1, &ts2);
+	assert(res.tv_sec == 20 && res.tv_nsec == 20);
+
+	ts1.tv_sec = 10;
+	ts1.tv_nsec = 999999999;
+	ts2.tv_sec = 0;
+	ts2.tv_nsec = 1;
+
+	res = timespec_add(&ts1, &ts2);
+	assert(res.tv_sec == 11 && res.tv_nsec == 0);
+
+	ts1.tv_sec = 0;
+	ts1.tv_nsec = 1;
+	ts2.tv_sec = 10;
+	ts2.tv_nsec = 999999999;
+
+	res = timespec_add(&ts1, &ts2);
+	assert(res.tv_sec == 11 && res.tv_nsec == 0);
+
+	ts1.tv_sec = 0;
+	ts1.tv_nsec = 1;
+	ts2.tv_sec = 10;
+	ts2.tv_nsec = 999999999;
+
+	res = timespec_diff(&ts1, &ts2);
+	assert(res.tv_sec == 10 && res.tv_nsec == 999999998);
+
+	ts1.tv_sec = 0;
+	ts1.tv_nsec = 999999999;
+	ts2.tv_sec = 10;
+	ts2.tv_nsec = 1;
+
+	res = timespec_diff(&ts1, &ts2);
+	assert(res.tv_sec == 9 && res.tv_nsec == 2);
+
+	ts1.tv_sec = 0;
+	ts1.tv_nsec = 1;
+	ts2.tv_sec = 10;
+	ts2.tv_nsec = 999999999;
+
+	res = timespec_diff(&ts1, &ts2);
+	assert(res.tv_sec == 10 && res.tv_nsec == 999999998);
+}
+
 int main(int argc, char** argv)
 {
 	test1();
 	test2();
 	test3();
+	test4();
 	sleep_ms(1000);
 	return 0;
 }

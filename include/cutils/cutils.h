@@ -6,5 +6,4 @@
 #include <cutils/misc.h>
 #include <cutils/byte_array.h>
 
-
 #endif /* CUTILS_H */
