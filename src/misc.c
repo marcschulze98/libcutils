@@ -52,7 +52,7 @@ struct timespec timespec_add(const struct timespec* ts_1, const struct timespec*
     }
 
     return res;
-};
+}
 
 
 max_uint_t timespec_ms(const struct timespec* ts)

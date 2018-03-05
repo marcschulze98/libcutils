@@ -2,8 +2,12 @@
 #define MISC_H
 
 #ifdef __unix__
-	#define _BSD_SOURCE
-	#define _DEFAULT_SOURCE
+	#ifndef _BSD_SOURCE
+	#define _BSD_SOURCE 1
+	#endif
+	#ifndef _DEFAULT_SOURCE
+	#define _DEFAULT_SOURCE 1
+	#endif
 	#include <unistd.h>
 #endif
 #ifdef _WIN32
