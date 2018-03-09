@@ -49,6 +49,15 @@ void vector_remove(Vector* vector, size_t index, void (*rmv)(void*))
 	}
 }
 
+void vector_remove_range(Vector* vector, size_t index, size_t length, void (*rmv)(void*))
+{
+	size_t i;
+	for(i = 0; i < length; i++)
+	{
+		vector_remove(vector, index+i, rmv);
+	}
+}
+
 size_t* vector_find(const Vector* haystack, const void* needle, int (*cmp)(const void*, const void*))
 {
 	size_t* ret;
@@ -66,18 +75,18 @@ size_t* vector_find(const Vector* haystack, const void* needle, int (*cmp)(const
 	return NULL;
 }
 
-bool vector_insert(Vector* vector, size_t index, void* item)
+bool_t vector_insert(Vector* vector, size_t index, void* item)
 {
 	if(index > vector->length || !vector_adjust_size(vector, vector->length+1))
-		return false;
+		return b_false;
 
 	memmove(vector->items+index+1, vector->items+index, (vector->length-index)*sizeof(*vector->items));
 	vector->items[index] = item;
 	++vector->length;
-	return true;
+	return b_true;
 }
 
-bool vector_adjust_size(Vector* vector, size_t size)
+bool_t vector_adjust_size(Vector* vector, size_t size)
 {
 	while(vector->capacity < size)
 	{
@@ -86,14 +95,14 @@ bool vector_adjust_size(Vector* vector, size_t size)
 		if(!vector->items)
 		{
 			vector->items = tmp;
-			return false;
+			return b_false;
 		}
 		vector->capacity *= 2;
 	}
-	return true;
+	return b_true;
 }
 
-bool vector_shrink(Vector* vector)
+bool_t vector_shrink(Vector* vector)
 {
 	while(vector->capacity > (vector->length*2))
 	{
@@ -102,11 +111,11 @@ bool vector_shrink(Vector* vector)
 		if(!vector->items)
 		{
 			vector->items = tmp;
-			return false;
+			return b_false;
 		}
 		vector->capacity /= 2;
 	}
-	return true;
+	return b_true;
 }
 
 void delete_vector(Vector* vector, void (*rmv)(void*))

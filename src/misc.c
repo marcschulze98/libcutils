@@ -10,6 +10,7 @@ void sleep_ms(unsigned int milliseconds)
 	#endif
 }
 
+#if __STDC_VERSION__ >= 199901L
 uint32_t ntoh32(uint32_t const net)
 {
 	uint8_t data[4];
@@ -20,6 +21,7 @@ uint32_t ntoh32(uint32_t const net)
 	     | ((uint32_t) data[1] << 16)
 	     | ((uint32_t) data[0] << 24);
 }
+#endif
 
 #if __STDC_VERSION__ >= 201112L
 struct timespec timespec_diff(const struct timespec* old_ts, const struct timespec* new_ts)

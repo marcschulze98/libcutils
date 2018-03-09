@@ -14,11 +14,12 @@
 	#include <windows.h>
 #endif
 
-#include <stdint.h>
 #include <string.h>
 
 #if __STDC_VERSION__ >= 199901L
+	#include <stdint.h>
 	typedef uintmax_t max_uint_t;
+	uint32_t ntoh32(uint32_t const net);
 #else
 	typedef unsigned long max_uint_t;
 #endif
@@ -29,7 +30,6 @@
 #endif
 
 void sleep_ms(unsigned int milliseconds);
-uint32_t ntoh32(uint32_t const net);
 
 #if __STDC_VERSION__ >= 201112L
 	struct timespec timespec_diff(const struct timespec* old_ts, const struct timespec* new_ts);

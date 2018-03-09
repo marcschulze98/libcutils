@@ -26,15 +26,24 @@ void string_remove(String* string, size_t index)
 	}
 }
 
-bool string_insert(String* string, size_t index, char character)
+void string_remove_range(String* string, size_t index, size_t length)
+{
+	size_t i;
+	for(i = 0; i < length; i++)
+	{
+		string_remove(string, index+i);
+	}
+}
+
+bool_t string_insert(String* string, size_t index, char character)
 {
 	if(index > string->length || !string_adjust_size(string, string->length))
-		return false;
+		return b_false;
 
 	memmove(string->chars+index+1, string->chars+index, (string->length-index)*sizeof(*string->chars));
 	string->chars[index] = character;
 	string->length++;
-	return true;
+	return b_true;
 }
 
 char string_at(const String* string, size_t index)
@@ -57,13 +66,13 @@ char string_pop_at(String* string, size_t index)
 	}
 }
 
-bool string_concat(String* string, const String* other)
+bool_t string_concat(String* string, const String* other)
 {
 	if(!string_adjust_size(string,string->length+other->length-1))
-		return false;
+		return b_false;
 	memcpy(string->chars+string->length,other->chars,other->length);
 	string->length += other->length;
-	return true;
+	return b_true;
 }
 
 size_t* string_find_char(const String* haystack, const char needle)
@@ -82,7 +91,7 @@ size_t* string_find_char(const String* haystack, const char needle)
 	return NULL;
 }
 
-bool string_adjust_size(String* string, size_t size)
+bool_t string_adjust_size(String* string, size_t size)
 {
 	while(string->capacity < size)
 	{
@@ -91,11 +100,11 @@ bool string_adjust_size(String* string, size_t size)
 		if(!string->chars)
 		{
 			string->chars = tmp;
-			return false;
+			return b_false;
 		}
 		string->capacity *= 2;
 	}
-	return true;
+	return b_true;
 }
 
 

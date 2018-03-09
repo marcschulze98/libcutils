@@ -108,12 +108,8 @@ static void test2(void)
 static void test3(void)
 {
 	Bytearray* bt;
-	void* localarray;
-	struct test my_struct;
-	struct test* my_structptr;
 	char* tmpchar;
 
-	/*test pushing and popping with default constructor and simple values*/
 	bt = new_bytearray(1);
 	bytearray_push(bt, "a");
 	bytearray_push(bt, "b");
@@ -123,70 +119,37 @@ static void test3(void)
 
 	assert(strcmp(bt->items, "abcd") == 0);
 
-	tmpchar = bytearray_pop(bt);
+	tmpchar = bytearray_pop(bt, NULL);
 	assert(*tmpchar == '\0');
 	free(tmpchar);
 
-	tmpchar = bytearray_pop(bt);
+	tmpchar = bytearray_pop(bt, NULL);
 	assert(*tmpchar == 'd');
 	free(tmpchar);
 
-	tmpchar = bytearray_pop(bt);
+	tmpchar = bytearray_pop(bt, NULL);
 	assert(*tmpchar == 'c');
 	free(tmpchar);
 
-	tmpchar = bytearray_pop(bt);
+	tmpchar = malloc(1);
+	bytearray_pop(bt, tmpchar);
 	assert(*tmpchar == 'b');
-	free(tmpchar);
 
-	tmpchar = bytearray_pop(bt);
+	bytearray_pop(bt, tmpchar);
 	assert(*tmpchar == 'a');
 	free(tmpchar);
 
-	tmpchar = bytearray_pop(bt);
+	tmpchar = bytearray_pop(bt, NULL);
 	assert(tmpchar == NULL);
-	free(tmpchar);
 
 	bytearray_push(bt, "a");
-	tmpchar = bytearray_pop(bt);
+	tmpchar = bytearray_pop(bt, NULL);
 	assert(*tmpchar == 'a');
 	free(tmpchar);
 
-	delete_bytearray(bt);
-
-	/*test pushing and popping with self allocated array and fixed size*/
-	localarray = malloc(3*sizeof(struct test));
-	my_struct.a = 0;
-	my_struct.b = 0;
-
-	bt = new_bytearray_ext(3, sizeof(struct test), localarray, NULL, BT_FREE_ARRAY | BT_FIXED | BT_FREE_STRUCT);
-	bytearray_push(bt, &my_struct);
-	my_struct.a = 1;
-	my_struct.b = 1;
-	bytearray_push(bt, &my_struct);
-
-	my_struct.a = 2;
-	my_struct.b = 2;
-	bytearray_push(bt, &my_struct);
-
-	my_struct.a = 3;
-	my_struct.b = 3;
-	bytearray_push(bt, &my_struct);
-
-	my_structptr = bytearray_pop(bt);
-
-	my_struct.a = 2;
-	my_struct.b = 2;
-	assert(my_structptr->a == my_struct.a);
-	assert(my_structptr->b == my_struct.b);
-	free(my_structptr);
-
-
-
-	delete_bytearray(bt);
-
+	delete_bytearray(bt, NULL);
 }
-
+#if __STDC_VERSION__ >= 201112L
 static void test4(void)
 {
 	struct timespec ts1 = {10, 10};
@@ -236,13 +199,16 @@ static void test4(void)
 	res = timespec_diff(&ts1, &ts2);
 	assert(res.tv_sec == 10 && res.tv_nsec == 999999998);
 }
+#endif
 
 int main(int argc, char** argv)
 {
 	test1();
 	test2();
 	test3();
+	#if __STDC_VERSION__ >= 201112L
 	test4();
+	#endif
 	sleep_ms(1000);
 	return 0;
 }
