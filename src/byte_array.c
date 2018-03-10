@@ -73,7 +73,7 @@ bool_t bytearray_insert(Bytearray* bytearray, size_t index, const void* item)
 
 	memmove(bytearray->items+index*size+1*size, bytearray->items+index*size, (length*size-index*size)*sizeof(*bytearray->items));
 	memcpy(bytearray->items+index*size, item, bytearray->element_size);
-	++bytearray->length;
+	bytearray->length++;
 	return b_true;
 }
 
@@ -87,7 +87,7 @@ void bytearray_remove(Bytearray* bytearray, size_t index, void (*rmv)(void*))
 			rmv(&bytearray->items[index*elsize]);
 
 		memmove(bytearray->items+index*elsize, bytearray->items+index*elsize+1*elsize, (length*elsize-index*elsize-1*elsize)*sizeof(*bytearray->items));
-		--bytearray->length;
+		bytearray->length--;
 	}
 }
 

@@ -30,6 +30,7 @@ void bytearray_remove(Bytearray* bytearray, size_t index, void (*rmv)(void*));
 
 bool_t bytearray_adjust_size(Bytearray* bytearray, size_t size);
 bool_t bytearray_shrink(Bytearray* bytearray);
+HEDLEY_NON_NULL(3)
 size_t* bytearray_find(const Bytearray* haystack, const void* needle, int (*cmp)(const void*, const void*));
 
 

@@ -30,8 +30,10 @@ void string_remove_range(String* string, size_t index, size_t length);
 
 bool_t string_adjust_size(String* string, size_t size);
 size_t* string_find_char(const String* haystack, const char needle);
+size_t* string_find_str(const String* haystack, const String* needle);
 
 bool_t string_concat(String* string, const String* other);
+
 String* from_cstring(const char* cstring);
 String* from_cstring_del(char* cstring);
 char* to_cstring(const String* string);

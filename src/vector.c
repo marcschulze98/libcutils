@@ -45,7 +45,7 @@ void vector_remove(Vector* vector, size_t index, void (*rmv)(void*))
 		if(rmv)
 			rmv(vector->items[index]);
 		memmove(vector->items+index, vector->items+index+1, (vector->length-index-1)*sizeof(*vector->items));
-		--vector->length;
+		vector->length--;
 	}
 }
 
@@ -60,8 +60,7 @@ void vector_remove_range(Vector* vector, size_t index, size_t length, void (*rmv
 
 size_t* vector_find(const Vector* haystack, const void* needle, int (*cmp)(const void*, const void*))
 {
-	size_t* ret;
-	size_t i;
+	size_t i, *ret;
 
 	for(i = 0; i < haystack->length; i++)
 	{
@@ -82,7 +81,7 @@ bool_t vector_insert(Vector* vector, size_t index, void* item)
 
 	memmove(vector->items+index+1, vector->items+index, (vector->length-index)*sizeof(*vector->items));
 	vector->items[index] = item;
-	++vector->length;
+	vector->length++;
 	return b_true;
 }
 

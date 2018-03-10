@@ -22,7 +22,7 @@ void string_remove(String* string, size_t index)
 	if(index < string->length)
 	{
 		memmove(string->chars+index, string->chars+index+1, (string->length-index-1)*sizeof(*string->chars));
-		--string->length;
+		string->length--;
 	}
 }
 
@@ -77,8 +77,8 @@ bool_t string_concat(String* string, const String* other)
 
 size_t* string_find_char(const String* haystack, const char needle)
 {
-	size_t* ret;
-	size_t i;
+	size_t i, *ret;
+
 	for(i = 0; i < haystack->length; i++)
 	{
 		if(haystack->chars[i] == needle)
@@ -86,6 +86,27 @@ size_t* string_find_char(const String* haystack, const char needle)
 			ret = malloc(sizeof(*ret));
 			*ret = i;
 			return ret;
+		}
+	}
+	return NULL;
+}
+
+size_t* string_find_str(const String* haystack, const String* needle)
+{
+	size_t *ret, i, j, tmp;
+
+	for(i = 0; i < haystack->length; i++)
+	{
+		for(j = 0, tmp = i; j < needle->length; j++, i++)
+		{
+			if(haystack->chars[i] != needle->chars[j])
+			{
+				break;
+			} else if(j == needle->length-1){
+				ret = malloc(sizeof(*ret));
+				*ret = tmp;
+				return ret;
+			}
 		}
 	}
 	return NULL;

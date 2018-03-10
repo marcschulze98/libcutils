@@ -30,6 +30,7 @@ void vector_remove_range(Vector* vector, size_t index, size_t length, void (*rmv
 
 bool_t vector_adjust_size(Vector* vector, size_t size);
 bool_t vector_shrink(Vector* vector);
+HEDLEY_NON_NULL(3)
 size_t* vector_find(const Vector* haystack, const void* needle, int (*cmp)(const void*, const void*));
 
 

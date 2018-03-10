@@ -2,6 +2,7 @@
 #define CUTILS_COMMON_H
 
 #include <stddef.h>
+#include <cutils/hedley.h>
 #ifndef SIZE_MAX
 	#define SIZE_MAX (size_t)-1;
 #endif

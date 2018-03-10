@@ -70,6 +70,7 @@ static void test2(void)
 	String* string;
 	String* string2;
 	char* cstring;
+	size_t* tmp;
 
 	string = new_string();
 
@@ -100,6 +101,15 @@ static void test2(void)
 	cstring = to_cstring(string);
 	assert(strcmp(cstring, "aabcxyz") == 0);
 	free(cstring);
+
+	delete_string(string2);
+	delete_string(string);
+
+	string = from_cstring("abcd");
+	string2 = from_cstring("cd");
+	tmp = string_find_str(string, string2);
+	assert(*tmp == 2);
+	free(tmp);
 
 	delete_string(string2);
 	delete_string(string);
