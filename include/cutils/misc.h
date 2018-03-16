@@ -15,6 +15,7 @@
 #endif
 
 #include <string.h>
+#include <stdlib.h>
 #include <cutils/common.h>
 
 #if __STDC_VERSION__ >= 199901L
@@ -38,10 +39,23 @@ static void memswap(void* item1, void* item2, size_t length)
 
 	while(length--)
 	{
-		tmp = *item1_tmp;
-		*item1_tmp = *item2_tmp;
-		*item2_tmp = tmp;
+		tmp = item1_tmp[length];
+		item1_tmp[length] = item2_tmp[length];
+		item2_tmp[length] = tmp;
 	}
+}
+
+HEDLEY_INLINE
+static bool memqswap(void* item1, void* item2, size_t length)
+{
+	void* tmp = malloc(length);
+	if(!tmp)
+		return false;
+	memcpy(tmp, item1, length);
+	memcpy(item1, item2, length);
+	memcpy(item2, tmp, length);
+	free(tmp);
+	return true;
 }
 
 #if __STDC_VERSION__ >= 201112L

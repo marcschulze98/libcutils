@@ -1,7 +1,7 @@
 #include <cutils/linked-list.h>
 #include <cutils/misc.h>
 
-LinkedList* new_ll(bool_t doubly_linked, bool_t circularly_linked)
+LinkedList* new_ll(bool doubly_linked, bool circularly_linked)
 {
 	LinkedList* ret = malloc(sizeof(*ret));
 	ret->head = NULL;
@@ -12,7 +12,7 @@ LinkedList* new_ll(bool_t doubly_linked, bool_t circularly_linked)
 	return ret;
 }
 
-void delete_sll(LinkedList* ll, void(*rmv) (void*))
+void delete_ll(LinkedList* ll, void(*rmv) (void*))
 {
 	size_t i;
 	SLnode *current, *tmp;
@@ -27,30 +27,11 @@ void delete_sll(LinkedList* ll, void(*rmv) (void*))
 		tmp = current;
 		current = current->next;
 		free(tmp);
-
 	}
+	free(ll);
 }
 
-void delete_dll(LinkedList* ll, void(*rmv) (void*))
-{
-	size_t i;
-	DLnode *current, *tmp;
-
-	current = ll->head;
-
-	for(i = 0; i < ll->length; i++)
-	{
-
-		if(rmv)
-			rmv(current->item);
-		tmp = current;
-		current = current->next;
-		free(tmp);
-
-	}
-}
-
-void* sll_at(const LinkedList* ll, size_t index)
+void* llnode_at(const LinkedList* ll, size_t index)
 {
 	size_t i;
 	SLnode* current;
@@ -62,67 +43,31 @@ void* sll_at(const LinkedList* ll, size_t index)
 		current = current->next;
 	}
 
-	return current->item;
+	return current;
 }
 
-void* dll_at(const LinkedList* ll, size_t index)
+
+void* ll_pop_at(LinkedList* ll, size_t index)
 {
-	size_t i;
-	DLnode* current;
-
-	current = ll->head;
-
-	for(i = 0; i < index; i++)
-	{
-		current = current->next;
-	}
-
-	return current->item;
-}
-
-void* sll_pop_at(LinkedList* ll, size_t index)
-{
-	size_t i;
-	SLnode* current;
+	SLnode* node;
 	void* tmp;
 
-	current = ll->head;
+	node = llnode_at(ll ,index);
 
-	for(i = 0; i < index; i++)
-	{
-		current = current->next;
-	}
-
-	tmp = current->item;
+	tmp = node->item;
 	ll_remove(ll, index, NULL);
 	return tmp;
 }
 
-void* dll_pop_at(LinkedList* ll, size_t index)
-{
-	size_t i;
-	DLnode* current;
-	void* tmp;
 
-	current = ll->head;
 
-	for(i = 0; i < index; i++)
-	{
-		current = current->next;
-	}
-
-	tmp = current->item;
-	ll_remove(ll, index, NULL);
-	return tmp;
-}
-
-bool_t sll_insert(LinkedList* ll, size_t index, void* item)
+bool sll_insert(LinkedList* ll, size_t index, void* item)
 {
 	size_t i;
 	SLnode *current, *prev, *newnode = malloc(sizeof(*newnode));
 
 	if(!newnode)
-		return b_false;
+		return false;
 
 	newnode->item =item;
 	prev = NULL;
@@ -137,59 +82,74 @@ bool_t sll_insert(LinkedList* ll, size_t index, void* item)
 	if(current)
 	{
 		newnode->next = current;
-		if(prev)
-			prev->next = newnode;
-		else
-			ll->head = newnode;
-	} else {
-		ll->tail = newnode;
 		if(index == 0)
 			ll->head = newnode;
+		else
+			prev->next = newnode;
+	} else {
+		ll->tail = newnode;
 		newnode->next = NULL;
+		if(index == 0)
+			ll->head = newnode;
+		if(prev)
+			prev->next = newnode;
 	}
 
 	ll->length++;
-	return b_true;
+	return true;
 }
 
-bool_t dll_insert(LinkedList* ll, size_t index, void* item)
+bool dll_insert(LinkedList* ll, size_t index, void* item)
 {
 	size_t i;
-	DLnode *current, *newnode = malloc(sizeof(*newnode));
+	DLnode *current, *prev, *newnode = malloc(sizeof(*newnode));
 
 	if(!newnode)
-		return b_false;
+		return false;
 
-	newnode->item =item;
+	newnode->sl.item = item;
+	prev = NULL;
 	current = ll->head;
 
 	for(i = 0; i < index; i++)
 	{
-		current = current->next;
+		prev = current;
+		current = current->sl.next;
 	}
 
 	if(current)
 	{
-		newnode->next = current;
-		if(current->prev)
+		newnode->sl.next = current;
+		if(index == 0)
 		{
-			current->prev->next = newnode;
-			newnode->prev =current;
+			ll->head = newnode;
+			newnode->prev = NULL;
 		} else {
+			prev->sl.next = newnode;
+			newnode->prev = prev;
+		}
+		current->prev = newnode;
+	} else {
+		ll->tail = newnode;
+		newnode->sl.next = NULL;
+		if(index == 0)
+		{
 			ll->head = newnode;
 			newnode->prev = NULL;
 		}
-	} else {
-		ll->tail = newnode;
-		if(index == 0)
-			ll->head = newnode;
-		newnode->next = NULL;
-		newnode->prev = NULL;
+		if(prev)
+		{
+			prev->sl.next = newnode;
+			newnode->prev = prev;
+		}
+
 	}
 
 	ll->length++;
-	return b_true;
+	return true;
 }
+
+
 
 void sll_remove(LinkedList* ll, size_t index, void (*rmv)(void*))
 {
@@ -208,29 +168,49 @@ void sll_remove(LinkedList* ll, size_t index, void (*rmv)(void*))
 	if(rmv)
 		rmv(current->item);
 
-	prev->next = current->next;
+	if(!current->next)
+		ll->tail = prev;
+
+	if(prev)
+		prev->next = current->next;
+	else
+		ll->head = current->next;
+
 	free(current);
+	ll->length--;
 }
 
 void dll_remove(LinkedList* ll, size_t index, void (*rmv)(void*))
 {
 	size_t i;
-	DLnode* current;
+	DLnode *current, *prev;
 
+	prev = NULL;
 	current = ll->head;
 
 	for(i = 0; i < index; i++)
 	{
-		current = current->next;
+		prev = current;
+		current = current->sl.next;
 	}
 
 	if(rmv)
-		rmv(current->item);
+		rmv(current->sl.item);
 
-	current->prev->next = current->next;
-	current->next->prev = current->prev;
+	if(current->sl.next)
+		((DLnode*)(current->sl.next))->prev = prev;
+	else
+		ll->tail = prev;
+
+	if(prev)
+		prev->sl.next = current->sl.next;
+	else
+		ll->head = current->sl.next;
+
 	free(current);
+	ll->length--;
 }
+
 
 void sll_remove_range(LinkedList* ll, size_t index, size_t length, void (*rmv)(void*))
 {
@@ -250,18 +230,25 @@ void sll_remove_range(LinkedList* ll, size_t index, size_t length, void (*rmv)(v
 	{
 		if(rmv)
 			rmv(current->item);
-		tmp = current;
+		tmp = current->next;
 		free(current);
-		current = tmp->next;
+		current = tmp;
 	}
 
-	prev->next = current;
+	if(!current)
+		ll->tail = prev;
+
+	if(prev)
+		prev->next = current;
+	else
+		ll->head = current;
+	ll->length -= length;
 }
 
 void dll_remove_range(LinkedList* ll, size_t index, size_t length, void (*rmv)(void*))
 {
 	size_t i;
-	DLnode *current, *prev;
+	DLnode *current, *tmp, *prev;
 
 	prev = NULL;
 	current = ll->head;
@@ -269,45 +256,36 @@ void dll_remove_range(LinkedList* ll, size_t index, size_t length, void (*rmv)(v
 	for(i = 0; i < index; i++)
 	{
 		prev = current;
-		current = current->next;
+		current = current->sl.next;
 	}
 
 	for(i = 0; i < length; i++)
 	{
 		if(rmv)
-			rmv(current->item);
-		current = current->next;
-		free(current->prev);
+			rmv(current->sl.item);
+		tmp = current->sl.next;
+		free(current);
+		current = tmp;
 	}
+	if(current)
+		current->prev = prev;
+	else
+		ll->tail = prev;
 
-	prev->next = current;
-	current->prev = prev;
+	if(prev)
+	{
+		prev->sl.next = current;
+	} else {
+		ll->head = current;
+	}
+	ll->length -= length;
 }
 
-size_t* sll_find(const LinkedList* haystack, const void* needle, int (*cmp)(const void*, const void*))
+
+size_t* ll_find(const LinkedList* haystack, const void* needle, int (*cmp)(const void*, const void*))
 {
 	size_t i, *ret;
 	SLnode* current;
-
-	current = haystack->head;
-
-	for(i = 0; i < haystack->length; i++)
-	{
-		if(cmp(current->item, needle) == 0)
-		{
-			ret = malloc(sizeof(*ret));
-			*ret = i;
-			return ret;
-		}
-		current = current->next;
-	}
-	return NULL;
-}
-
-size_t* dll_find(const LinkedList* haystack, const void* needle, int (*cmp)(const void*, const void*))
-{
-	size_t i, *ret;
-	DLnode* current;
 
 	current = haystack->head;
 
@@ -328,6 +306,7 @@ void sll_swap(LinkedList* ll, size_t item1, size_t item2)
 {
 	size_t i, first_index, second_index;
 	SLnode *first, *second;
+	void* tmp;
 
 	first_index = item1 <= item2 ? item1 : item2;
 	second_index = item1 <= item2 ? item2 : item1;
@@ -338,14 +317,18 @@ void sll_swap(LinkedList* ll, size_t item1, size_t item2)
 	for(i = 0; i < second_index; i++)
 	{
 		if(i == first_index)
-			first = second->next;
+			first = second;
 		second = second->next;
 	}
 
 	if(!first)
 		first = second;
 
-	memswap(&first->item, &second->item, sizeof(first->item));
+	tmp = first->item;
+	first->item = second->item;
+	second->item = tmp;
+
+	/*memswap(&first->item, &second->item, sizeof(first->item));*/
 }
 
 void dll_swap(LinkedList* ll, size_t item1, size_t item2)
@@ -362,12 +345,12 @@ void dll_swap(LinkedList* ll, size_t item1, size_t item2)
 	for(i = 0; i < second_index; i++)
 	{
 		if(i == first_index)
-			first = second->next;
-		second = second->next;
+			first = second;
+		second = second->sl.next;
 	}
 
 	if(!first)
 		first = second;
 
-	memswap(&first->item, &second->item, sizeof(first->item));
+	memswap(&first->sl.item, &second->sl.item, sizeof(first->sl.item));
 }

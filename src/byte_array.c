@@ -63,18 +63,18 @@ void* bytearray_pop_at(Bytearray* bytearray, size_t index, void* retptr)
 	return retptr;
 }
 
-bool_t bytearray_insert(Bytearray* bytearray, size_t index, const void* item)
+bool bytearray_insert(Bytearray* bytearray, size_t index, const void* item)
 {
 	size_t length = bytearray->length;
 	size_t size = bytearray->element_size;
 
 	if(index > length || !bytearray_adjust_size(bytearray, length+1))
-		return b_false;
+		return false;
 
 	memmove(bytearray->items+index*size+1*size, bytearray->items+index*size, (length*size-index*size)*sizeof(*bytearray->items));
 	memcpy(bytearray->items+index*size, item, bytearray->element_size);
 	bytearray->length++;
-	return b_true;
+	return true;
 }
 
 void bytearray_remove(Bytearray* bytearray, size_t index, void (*rmv)(void*))
@@ -91,7 +91,7 @@ void bytearray_remove(Bytearray* bytearray, size_t index, void (*rmv)(void*))
 	}
 }
 
-bool_t bytearray_adjust_size(Bytearray* bytearray, size_t size)
+bool bytearray_adjust_size(Bytearray* bytearray, size_t size)
 {
 	while(bytearray->capacity < size)
 	{
@@ -102,14 +102,14 @@ bool_t bytearray_adjust_size(Bytearray* bytearray, size_t size)
 		if(!bytearray->items)
 		{
 			bytearray->items = tmp;
-			return b_false;
+			return false;
 		}
 		bytearray->capacity *= 2;
 	}
-	return b_true;
+	return true;
 }
 
-bool_t bytearray_shrink(Bytearray* bytearray)
+bool bytearray_shrink(Bytearray* bytearray)
 {
 	while(bytearray->capacity > bytearray->length*2)
 	{
@@ -120,11 +120,11 @@ bool_t bytearray_shrink(Bytearray* bytearray)
 		if(!bytearray->items)
 		{
 			bytearray->items = tmp;
-			return b_false;
+			return false;
 		}
 		bytearray->capacity /= 2;
 	}
-	return b_true;
+	return true;
 }
 
 size_t* bytearray_find(const Bytearray* haystack, const void* needle, int (*cmp)(const void*, const void*))

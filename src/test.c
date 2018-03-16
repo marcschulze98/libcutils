@@ -15,7 +15,7 @@ static int cmp_str(const void* str1, const void* str2)
 	return !((str1_s->a == str2_s->a) && (str1_s->b == str2_s->b));
 }
 
-static void test1(void)
+static void test_vector(void)
 {
 	size_t* find;
 	Vector* vector;
@@ -65,7 +65,7 @@ static void test1(void)
 	delete_vector(vector, free);
 }
 
-static void test2(void)
+static void test_string(void)
 {
 	String* string;
 	String* string2;
@@ -115,7 +115,7 @@ static void test2(void)
 	delete_string(string);
 }
 
-static void test3(void)
+static void test_bytearray(void)
 {
 	Bytearray* bt;
 	char* tmpchar;
@@ -160,7 +160,7 @@ static void test3(void)
 	delete_bytearray(bt, NULL);
 }
 #if __STDC_VERSION__ >= 201112L
-static void test4(void)
+static void test_timespec(void)
 {
 	struct timespec ts1 = {10, 10};
 	struct timespec ts2 = {10, 10};
@@ -210,15 +210,60 @@ static void test4(void)
 	assert(res.tv_sec == 10 && res.tv_nsec == 999999998);
 }
 #endif
+static void test_ll(void)
+{
+	LinkedList* ll;
+	struct test my_structa, my_structb, *my_structptr;
+	int truth;
+	my_structa.a = 5;
+	my_structa.b = 5;
+	my_structb.a = 7;
+	my_structb.b = 7;
+
+	for(truth = 0; truth<2; truth++)
+	{
+		ll = new_ll(truth,truth);
+
+		ll_push(ll, &my_structa);
+		my_structptr = ll_pop(ll);
+		assert(my_structptr->a == 5 && my_structptr->b == 5);
+
+		ll_push(ll, &my_structa);
+		ll_push(ll, &my_structa);
+		ll_push(ll, &my_structa);
+		ll_push(ll, &my_structb);
+
+		my_structptr = ll_at(ll, ll->length-1);
+		assert(my_structptr->a == 7);
+
+		ll_swap(ll, 0, ll->length-1);
+
+		my_structptr = ll_at(ll, ll->length-1);
+		assert(my_structptr->a == 5);
+
+
+		ll_remove_range(ll, 0, ll->length-1, NULL);
+
+		delete_ll(ll, NULL);
+	}
+
+}
 
 int main(int argc, char** argv)
 {
-	test1();
-	test2();
-	test3();
+	int a = 5;
+	int b = 2;
+	memswap(&a, &b, sizeof(int));
+	assert(a == 2 && b == 5);
+
+	test_vector();
+	test_string();
+	test_bytearray();
 	#if __STDC_VERSION__ >= 201112L
-	test4();
+	test_timespec();
 	#endif
+	test_ll();
+
 	sleep_ms(1000);
 	return 0;
 }

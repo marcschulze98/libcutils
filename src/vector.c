@@ -48,7 +48,7 @@ void vector_remove(Vector* vector, size_t index, void (*rmv)(void*))
 		vector->length--;
 	}
 }
-
+/* TODO: optimize */
 void vector_remove_range(Vector* vector, size_t index, size_t length, void (*rmv)(void*))
 {
 	size_t i;
@@ -74,18 +74,18 @@ size_t* vector_find(const Vector* haystack, const void* needle, int (*cmp)(const
 	return NULL;
 }
 
-bool_t vector_insert(Vector* vector, size_t index, void* item)
+bool vector_insert(Vector* vector, size_t index, void* item)
 {
 	if(index > vector->length || !vector_adjust_size(vector, vector->length+1))
-		return b_false;
+		return false;
 
 	memmove(vector->items+index+1, vector->items+index, (vector->length-index)*sizeof(*vector->items));
 	vector->items[index] = item;
 	vector->length++;
-	return b_true;
+	return true;
 }
 
-bool_t vector_adjust_size(Vector* vector, size_t size)
+bool vector_adjust_size(Vector* vector, size_t size)
 {
 	while(vector->capacity < size)
 	{
@@ -94,14 +94,14 @@ bool_t vector_adjust_size(Vector* vector, size_t size)
 		if(!vector->items)
 		{
 			vector->items = tmp;
-			return b_false;
+			return false;
 		}
 		vector->capacity *= 2;
 	}
-	return b_true;
+	return true;
 }
 
-bool_t vector_shrink(Vector* vector)
+bool vector_shrink(Vector* vector)
 {
 	while(vector->capacity > (vector->length*2))
 	{
@@ -110,11 +110,11 @@ bool_t vector_shrink(Vector* vector)
 		if(!vector->items)
 		{
 			vector->items = tmp;
-			return b_false;
+			return false;
 		}
 		vector->capacity /= 2;
 	}
-	return b_true;
+	return true;
 }
 
 void delete_vector(Vector* vector, void (*rmv)(void*))

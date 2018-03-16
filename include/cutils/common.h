@@ -6,7 +6,14 @@
 #ifndef SIZE_MAX
 	#define SIZE_MAX (size_t)-1;
 #endif
-typedef enum {b_false, b_true} bool_t;
+
+#if __STDC_VERSION__ >= 199901L
+	#include <stdbool.h>
+#else
+	#ifndef CUTILS_NO_BOOL
+	typedef enum {false = 0, true = 1} bool;
+	#endif
+#endif
 
 
 #endif /* CUTILS_COMMON_H */

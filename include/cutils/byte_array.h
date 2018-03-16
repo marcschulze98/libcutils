@@ -24,12 +24,12 @@ void* bytearray_at(const Bytearray* bytearray, size_t index);
 void* bytearray_pop_at(Bytearray* bytearray, size_t index, void* retptr);
 
 #define bytearray_push(bytearray, item) bytearray_insert(bytearray, bytearray->length, item)
-bool_t bytearray_insert(Bytearray* bytearray, size_t index, const void* item);
+bool bytearray_insert(Bytearray* bytearray, size_t index, const void* item);
 
 void bytearray_remove(Bytearray* bytearray, size_t index, void (*rmv)(void*));
 
-bool_t bytearray_adjust_size(Bytearray* bytearray, size_t size);
-bool_t bytearray_shrink(Bytearray* bytearray);
+bool bytearray_adjust_size(Bytearray* bytearray, size_t size);
+bool bytearray_shrink(Bytearray* bytearray);
 HEDLEY_NON_NULL(3)
 size_t* bytearray_find(const Bytearray* haystack, const void* needle, int (*cmp)(const void*, const void*));
 
