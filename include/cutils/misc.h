@@ -17,6 +17,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <cutils/common.h>
+#include <ctype.h>
 
 #if __STDC_VERSION__ >= 199901L
 	#include <stdint.h>
@@ -24,6 +25,15 @@
 	#ifdef UINT32_MAX
 		uint32_t ntoh32(uint32_t const net);
 	#endif
+	HEDLEY_INLINE
+	static void memqswap_stack(void* item1, void* item2, size_t length)
+	{
+		unsigned char tmp[length];
+		memcpy(tmp, item1, length);
+		memcpy(item1, item2, length);
+		memcpy(item2, tmp, length);
+		free(tmp);
+	}
 #else
 	typedef unsigned long max_uint_t;
 #endif
@@ -31,8 +41,8 @@
 HEDLEY_INLINE
 static void memswap(void* item1, void* item2, size_t length)
 {
-	char *item1_tmp, *item2_tmp;
-	char tmp;
+	unsigned char *item1_tmp, *item2_tmp;
+	unsigned char tmp;
 
 	item1_tmp = item1;
 	item2_tmp = item2;
@@ -46,16 +56,11 @@ static void memswap(void* item1, void* item2, size_t length)
 }
 
 HEDLEY_INLINE
-static bool memqswap(void* item1, void* item2, size_t length)
+static void memqswap(void* item1, void* item2, void* tmp, size_t length)
 {
-	void* tmp = malloc(length);
-	if(!tmp)
-		return false;
 	memcpy(tmp, item1, length);
 	memcpy(item1, item2, length);
 	memcpy(item2, tmp, length);
-	free(tmp);
-	return true;
 }
 
 #if __STDC_VERSION__ >= 201112L
@@ -63,6 +68,8 @@ static bool memqswap(void* item1, void* item2, size_t length)
 #endif
 
 void sleep_ms(unsigned int milliseconds);
+int strcmp_nocase(const char* s1, const char* s2);
+int strncmp_nocase(const char* s1, const char* s2, size_t n);
 
 #if __STDC_VERSION__ >= 201112L
 	struct timespec timespec_diff(const struct timespec* old_ts, const struct timespec* new_ts);

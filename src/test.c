@@ -246,15 +246,28 @@ static void test_ll(void)
 
 		delete_ll(ll, NULL);
 	}
-
 }
 
 int main(int argc, char** argv)
 {
+	/* memswap tests */
 	int a = 5;
 	int b = 2;
+	void* tmp =  malloc(sizeof(int));
+
 	memswap(&a, &b, sizeof(int));
 	assert(a == 2 && b == 5);
+	#if __STDC_VERSION__ >= 199901L
+	memqswap_stack(&a, &b, sizeof(int));
+	assert(a == 5 && b == 2);
+	memqswap(&a, &b, tmp, sizeof(int));
+	assert(a == 2 && b == 5);
+	#else
+	memqswap(&a, &b, tmp, sizeof(int));
+	assert(a == 5 && b == 2);
+	#endif
+	free(tmp);
+	/* memswap tests */
 
 	test_vector();
 	test_string();
@@ -264,6 +277,12 @@ int main(int argc, char** argv)
 	#endif
 	test_ll();
 
+	/* misc tests */
 	sleep_ms(1000);
+	assert(strcmp_nocase("ASD", "aSd") == 0);
+	assert(strcmp_nocase("BSD", "asd") > 0);
+	assert(strcmp_nocase("ASD", "bsd") < 0);
+	assert(strncmp_nocase("ASDn", "asd", 3) == 0);
+	assert(strncmp_nocase("ASDn", "asd", 4) >0);
 	return 0;
 }
