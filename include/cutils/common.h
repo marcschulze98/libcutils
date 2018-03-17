@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <cutils/hedley.h>
 #ifndef SIZE_MAX
-	#define SIZE_MAX (size_t)-1;
+	#define SIZE_MAX ((size_t)(-1))
 #endif
 
 #if __STDC_VERSION__ >= 199901L
