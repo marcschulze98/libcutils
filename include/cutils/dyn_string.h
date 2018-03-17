@@ -29,6 +29,8 @@ void string_remove(String* string, size_t index);
 void string_remove_range(String* string, size_t index, size_t length);
 
 bool string_adjust_size(String* string, size_t size);
+/* TODO: rework find functions to take extra argument of result count
+ * and then find that many and return them in a vector/linked list */
 size_t* string_find_char(const String* haystack, const char needle);
 size_t* string_find_str(const String* haystack, const String* needle);
 
