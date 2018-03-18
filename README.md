@@ -14,10 +14,10 @@ Resizable array to store pointers to objects.
 Resizable String with some QOL functions.
 
 ### Linked-List
-Singly- and doubly-linked list with a commont interface.
+Singly- and doubly-linked list with a common interface.
 
 ### Extensions
-Various Posix and MS functions rewritten.
+Various Posix and MS functions rewritten for portable usage.
 
 ### Misc
 Some small helper functions for different tasks.
