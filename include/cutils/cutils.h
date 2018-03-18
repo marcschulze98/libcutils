@@ -6,5 +6,7 @@
 #include <cutils/misc.h>
 #include <cutils/byte_array.h>
 #include <cutils/linked-list.h>
+#include <cutils/extensions.h>
+#include <cutils/backport.h>
 
 #endif /* CUTILS_H */

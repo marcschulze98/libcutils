@@ -37,7 +37,7 @@ void string_remove_range(String* string, size_t index, size_t length)
 
 bool string_insert(String* string, size_t index, char character)
 {
-	if(index > string->length || !string_adjust_size(string, string->length))
+	if(index > string->length || string->length == SIZE_MAX || !string_adjust_size(string, string->length))
 		return false;
 
 	memmove(string->chars+index+1, string->chars+index, (string->length-index)*sizeof(*string->chars));
@@ -117,7 +117,7 @@ bool string_adjust_size(String* string, size_t size)
 	while(string->capacity < size)
 	{
 		char* tmp = string->chars;
-		string->chars = realloc(string->chars, string->capacity*2*(sizeof(*string->chars)));
+		string->chars = reallocsafe_inc(string->chars, sizeof(*string->chars), string->capacity, string->capacity);
 		if(!string->chars)
 		{
 			string->chars = tmp;

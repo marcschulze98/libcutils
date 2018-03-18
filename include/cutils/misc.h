@@ -20,8 +20,6 @@
 #include <ctype.h>
 
 #if __STDC_VERSION__ >= 199901L
-	#include <stdint.h>
-	typedef uintmax_t max_uint_t;
 	#ifdef UINT32_MAX
 		uint32_t ntoh32(uint32_t const net);
 	#endif
@@ -34,8 +32,6 @@
 		memcpy(item2, tmp, length);
 		free(tmp);
 	}
-#else
-	typedef unsigned long max_uint_t;
 #endif
 
 HEDLEY_INLINE
@@ -68,13 +64,11 @@ static void memqswap(void* item1, void* item2, void* tmp, size_t length)
 #endif
 
 void sleep_ms(unsigned int milliseconds);
-int strcmp_nocase(const char* s1, const char* s2);
-int strncmp_nocase(const char* s1, const char* s2, size_t n);
 
 #if __STDC_VERSION__ >= 201112L
 	struct timespec timespec_diff(const struct timespec* old_ts, const struct timespec* new_ts);
 	struct timespec timespec_add(const struct timespec* ts_1, const struct timespec* ts_2);
-	max_uint_t timespec_ms(const struct timespec* ts);
+	uintmax_t timespec_ms(const struct timespec* ts);
 #endif
 
 #endif /* MISC_H */

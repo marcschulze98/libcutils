@@ -76,7 +76,7 @@ size_t* vector_find(const Vector* haystack, const void* needle, int (*cmp)(const
 
 bool vector_insert(Vector* vector, size_t index, void* item)
 {
-	if(index > vector->length || !vector_adjust_size(vector, vector->length+1))
+	if(index > vector->length || vector->length == SIZE_MAX || !vector_adjust_size(vector, vector->length+1))
 		return false;
 
 	memmove(vector->items+index+1, vector->items+index, (vector->length-index)*sizeof(*vector->items));
@@ -90,7 +90,7 @@ bool vector_adjust_size(Vector* vector, size_t size)
 	while(vector->capacity < size)
 	{
 		void** tmp = vector->items;
-		vector->items = realloc(vector->items, vector->capacity*2*sizeof(*vector->items));
+		vector->items = reallocsafe_inc(vector->items, sizeof(*vector->items), vector->capacity, vector->capacity);
 		if(!vector->items)
 		{
 			vector->items = tmp;

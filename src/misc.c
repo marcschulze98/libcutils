@@ -10,45 +10,6 @@ void sleep_ms(unsigned int milliseconds)
 	#endif
 }
 
-int strcmp_nocase(const char* s1, const char* s2)
-{
-	const unsigned char* p1 = (const unsigned char*)s1;
-	const unsigned char* p2 = (const unsigned char*)s2;
-	unsigned char c1, c2;
-
-	do
-	{
-		c1 = (unsigned char)tolower(*p1++);
-		c2 = (unsigned char)tolower(*p2++);
-		if (c1 == '\0')
-			return c1 - c2;
-	}
-	while (c1 == c2);
-
-	return c1 - c2;
-}
-
-int strncmp_nocase(const char* s1, const char* s2, size_t n)
-{
-	const unsigned char* p1 = (const unsigned char*)s1;
-	const unsigned char* p2 = (const unsigned char*)s2;
-	unsigned char c1, c2;
-
-	if(n == 0)
-		return 0;
-
-	do
-	{
-		c1 = (unsigned char)tolower(*p1++);
-		c2 = (unsigned char)tolower(*p2++);
-		if (c1 == '\0')
-			return c1 - c2;
-	}
-	while (c1 == c2 && --n);
-
-	return c1 - c2;
-}
-
 #if __STDC_VERSION__ >= 199901L
 #ifdef UINT32_MAX
 uint32_t ntoh32(uint32_t const net)
@@ -98,8 +59,8 @@ struct timespec timespec_add(const struct timespec* ts_1, const struct timespec*
 }
 
 
-max_uint_t timespec_ms(const struct timespec* ts)
+uintmax_t timespec_ms(const struct timespec* ts)
 {
-	return (max_uint_t)ts->tv_sec * 1000 + (max_uint_t)ts->tv_nsec/1000000;
+	return (uintmax_t)ts->tv_sec * 1000 + (uintmax_t)ts->tv_nsec/1000000;
 }
 #endif

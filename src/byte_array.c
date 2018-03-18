@@ -68,7 +68,7 @@ bool bytearray_insert(Bytearray* bytearray, size_t index, const void* item)
 	size_t length = bytearray->length;
 	size_t size = bytearray->element_size;
 
-	if(index > length || !bytearray_adjust_size(bytearray, length+1))
+	if(index > length || length == SIZE_MAX || !bytearray_adjust_size(bytearray, length+1))
 		return false;
 
 	memmove(bytearray->items+index*size+1*size, bytearray->items+index*size, (length*size-index*size)*sizeof(*bytearray->items));
@@ -86,7 +86,7 @@ void bytearray_remove(Bytearray* bytearray, size_t index, void (*rmv)(void*))
 		if(rmv)
 			rmv(&bytearray->items[index*elsize]);
 
-		memmove(bytearray->items+index*elsize, bytearray->items+index*elsize+1*elsize, (length*elsize-index*elsize-1*elsize)*sizeof(*bytearray->items));
+		memmove(bytearray->items+index*elsize, bytearray->items+index*elsize+1*elsize, length*elsize-index*elsize-1*elsize);
 		bytearray->length--;
 	}
 }
@@ -95,10 +95,8 @@ bool bytearray_adjust_size(Bytearray* bytearray, size_t size)
 {
 	while(bytearray->capacity < size)
 	{
-		size_t capacity = bytearray->capacity;
-		size_t elsize = bytearray->element_size;
 		char* tmp = bytearray->items;
-		bytearray->items = realloc(bytearray->items, capacity*elsize*2*sizeof(*bytearray->items));
+		bytearray->items = reallocsafe_inc(bytearray->items, sizeof(*bytearray->items), bytearray->capacity, bytearray->capacity);
 		if(!bytearray->items)
 		{
 			bytearray->items = tmp;
@@ -113,10 +111,8 @@ bool bytearray_shrink(Bytearray* bytearray)
 {
 	while(bytearray->capacity > bytearray->length*2)
 	{
-		size_t capacity = bytearray->capacity;
-		size_t size = bytearray->element_size;
 		char* tmp = bytearray->items;
-		bytearray->items = realloc(bytearray->items, (capacity*size)/(2*sizeof(*bytearray->items)));
+		bytearray->items = realloc(bytearray->items, (bytearray->capacity*bytearray->element_size)/2);
 		if(!bytearray->items)
 		{
 			bytearray->items = tmp;
