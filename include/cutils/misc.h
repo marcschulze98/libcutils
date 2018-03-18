@@ -30,7 +30,6 @@
 		memcpy(tmp, item1, length);
 		memcpy(item1, item2, length);
 		memcpy(item2, tmp, length);
-		free(tmp);
 	}
 #endif
 
