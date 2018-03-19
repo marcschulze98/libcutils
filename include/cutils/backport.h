@@ -8,7 +8,7 @@
 #else
 
 	#ifndef SIZE_MAX
-		#define SIZE_MAX (size_t)-1
+		#define SIZE_MAX ((size_t)-1)
 	#endif /* SIZE_MAX */
 
 	#ifndef CUTILS_NO_BOOL
@@ -26,11 +26,11 @@
 		#ifdef LLONG_MAX
 			#define INTMAX_MAX LLONG_MAX
 			#define INTMAX_MIN LLONG_MIN
-			typedef unsigned long long intmax_t;
+			typedef long long intmax_t;
 		#else
 			#define INTMAX_MAX LONG_MAX
 			#define INTMAX_MIN LONG_MIN
-			typedef unsigned long intmax_t;
+			typedef long intmax_t;
 		#endif
 	#endif /* CUTILS_NO_MAX */
 
