@@ -1,5 +1,5 @@
-#ifndef BYTE_ARRAY_H
-#define BYTE_ARRAY_H
+#ifndef CUTILS_BYTE_ARRAY_H
+#define CUTILS_BYTE_ARRAY_H
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -9,7 +9,7 @@
 
 typedef struct Bytearray
 {
-	char* items;
+	byte* items;
 	size_t capacity;
 	size_t length;
 	size_t element_size;
@@ -34,5 +34,5 @@ HEDLEY_NON_NULL(3)
 size_t* bytearray_find(const Bytearray* haystack, const void* needle, int (*cmp)(const void*, const void*));
 
 
-#endif /* BYTE_ARRAY_H */
+#endif /* CUTILS_BYTE_ARRAY_H */
 

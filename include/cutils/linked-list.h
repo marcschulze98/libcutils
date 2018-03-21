@@ -1,5 +1,5 @@
-#ifndef LINKED_LIST_H
-#define LINKED_LIST_H
+#ifndef CUTILS_LINKED_LIST_H
+#define CUTILS_LINKED_LIST_H
 
 #include <cutils/common.h>
 #include <stdlib.h>
@@ -84,4 +84,4 @@ static void ll_swap(LinkedList* ll, size_t item1, size_t item2)
 }
 
 
-#endif /* LINKED_LIST_H */
+#endif /* CUTILS_LINKED_LIST_H */

@@ -1,5 +1,5 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+#ifndef CUTILS_VECTOR_H
+#define CUTILS_VECTOR_H
 
 #define VECTOR_DEFAULT_SIZE 4
 
@@ -34,4 +34,4 @@ HEDLEY_NON_NULL(3)
 size_t* vector_find(const Vector* haystack, const void* needle, int (*cmp)(const void*, const void*));
 
 
-#endif /* VECTOR_H */
+#endif /* CUTILS_VECTOR_H */

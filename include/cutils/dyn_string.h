@@ -1,5 +1,5 @@
-#ifndef DYN_STRING_H
-#define DYN_STRING_H
+#ifndef CUTILS_DYN_STRING_H
+#define CUTILS_DYN_STRING_H
 
 #define STRING_DEFAULT_SIZE 8
 
@@ -31,8 +31,8 @@ void string_remove_range(String* string, size_t index, size_t length);
 bool string_adjust_size(String* string, size_t size);
 /* TODO: rework find functions to take extra argument of result count
  * and then find that many and return them in a vector/linked list */
-size_t* string_find_char(const String* haystack, const char needle);
-size_t* string_find_str(const String* haystack, const String* needle);
+bool string_find_char(const String* haystack, const char needle, size_t* pos);
+bool string_find_str(const String* haystack, const String* needle, size_t* pos);
 
 bool string_concat(String* string, const String* other);
 
@@ -42,4 +42,4 @@ char* to_cstring(const String* string);
 char* to_cstring_del(String* string);
 
 
-#endif /* DYN_STRING_H */
+#endif /* CUTILS_DYN_STRING_H */

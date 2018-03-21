@@ -95,8 +95,8 @@ bool bytearray_adjust_size(Bytearray* bytearray, size_t size)
 {
 	while(bytearray->capacity < size)
 	{
-		char* tmp = bytearray->items;
-		bytearray->items = reallocsafe_inc(bytearray->items, sizeof(*bytearray->items), bytearray->capacity, bytearray->capacity);
+		byte* tmp = bytearray->items;
+		bytearray->items = cutil_reallocarray_inc(bytearray->items, bytearray->capacity, bytearray->element_size, bytearray->capacity);
 		if(!bytearray->items)
 		{
 			bytearray->items = tmp;
@@ -111,8 +111,8 @@ bool bytearray_shrink(Bytearray* bytearray)
 {
 	while(bytearray->capacity > bytearray->length*2)
 	{
-		char* tmp = bytearray->items;
-		bytearray->items = realloc(bytearray->items, (bytearray->capacity*bytearray->element_size)/2);
+		byte* tmp = bytearray->items;
+		bytearray->items = cutil_reallocarray(bytearray->items, bytearray->capacity/2, bytearray->element_size);
 		if(!bytearray->items)
 		{
 			bytearray->items = tmp;

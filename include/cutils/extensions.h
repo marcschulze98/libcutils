@@ -1,5 +1,5 @@
-#ifndef EXTENSIONS_H
-#define EXTENSIONS_H
+#ifndef CUTILS_EXTENSIONS_H
+#define CUTILS_EXTENSIONS_H
 
 #include <cutils/hedley.h>
 #include <errno.h>
@@ -7,12 +7,23 @@
 #include <cutils/backport.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdarg.h>
+#include <stdio.h>
 
-int strcmp_nocase(const char* s1, const char* s2);
-int strncmp_nocase(const char* s1, const char* s2, size_t n);
+int cutil_strcasecmp(const char* s1, const char* s2);
+int cutil_strncasecmp(const char* s1, const char* s2, size_t n);
+
+size_t cutil_strnlen(const char *s, size_t maxlen);
+
+char* cutil_strdup(const char *s);
+char* cutil_strndup(const char *s, size_t n);
+
+#if __STDC_VERSION__ >= 199901L
+int cutil_asprintf(char** strp, const char* format, ...);
+#endif
 
 HEDLEY_INLINE
-static void* reallocsafe(void *ptr, size_t nmemb, size_t size)
+static void* cutil_reallocarray(void *ptr, size_t nmemb, size_t size)
 {
 	size_t new_size = nmemb * size;
 
@@ -26,17 +37,17 @@ static void* reallocsafe(void *ptr, size_t nmemb, size_t size)
 }
 
 HEDLEY_INLINE
-static void* reallocsafe_inc(void *ptr, size_t nmemb, size_t size, size_t add)
+static void* cutil_reallocarray_inc(void *ptr, size_t nmemb, size_t size, size_t add)
 {
 	if(SIZE_MAX - add < size)
 	{
 		errno = ENOMEM;
 		return NULL;
 	} else {
-		return reallocsafe(ptr, nmemb, size+add);
+		return cutil_reallocarray(ptr, nmemb, size+add);
 	}
 }
 
 
 
-#endif /* EXTENSIONS_H */
+#endif /* CUTILS_EXTENSIONS_H */

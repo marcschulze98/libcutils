@@ -90,7 +90,7 @@ bool vector_adjust_size(Vector* vector, size_t size)
 	while(vector->capacity < size)
 	{
 		void** tmp = vector->items;
-		vector->items = reallocsafe_inc(vector->items, sizeof(*vector->items), vector->capacity, vector->capacity);
+		vector->items = cutil_reallocarray_inc(vector->items, vector->capacity,  sizeof(*vector->items), vector->capacity);
 		if(!vector->items)
 		{
 			vector->items = tmp;
@@ -106,7 +106,7 @@ bool vector_shrink(Vector* vector)
 	while(vector->capacity > (vector->length*2))
 	{
 		void** tmp = vector->items;
-		vector->items = realloc(vector->items, vector->capacity/2*sizeof(*vector->items));
+		vector->items = cutil_reallocarray(vector->items, vector->capacity/2, sizeof(*vector->items));
 		if(!vector->items)
 		{
 			vector->items = tmp;

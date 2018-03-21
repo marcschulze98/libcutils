@@ -70,7 +70,7 @@ static void test_string(void)
 	String* string;
 	String* string2;
 	char* cstring;
-	size_t* tmp;
+	size_t tmp;
 
 	string = new_string();
 
@@ -107,9 +107,8 @@ static void test_string(void)
 
 	string = from_cstring("abcd");
 	string2 = from_cstring("cd");
-	tmp = string_find_str(string, string2);
-	assert(*tmp == 2);
-	free(tmp);
+	string_find_str(string, string2, &tmp);
+	assert(tmp == 2);
 
 	delete_string(string2);
 	delete_string(string);
@@ -127,7 +126,7 @@ static void test_bytearray(void)
 	bytearray_push(bt, "d");
 	bytearray_push(bt, "\0");
 
-	assert(strcmp(bt->items, "abcd") == 0);
+	assert(strcmp((char*)bt->items, "abcd") == 0);
 
 	tmpchar = bytearray_pop(bt, NULL);
 	assert(*tmpchar == '\0');
@@ -248,6 +247,24 @@ static void test_ll(void)
 	}
 }
 
+static void test_bitfuncs(void)
+{
+	byte tmp = 0;
+
+	setbit(byte, tmp, 0);
+	assert(tmp == 1);
+	setbit(byte, tmp, 1);
+	assert(tmp == 3);
+	setbit(byte, tmp, 2);
+	assert(tmp == 7);
+
+	clearbit(byte, tmp, 2);
+	assert(tmp == 3);
+
+	assert(getbit(byte, tmp, 0) == 1);
+	assert(getbit(byte, tmp, 5) == 0);
+}
+
 int main(int argc, char** argv)
 {
 	/* memswap tests */
@@ -276,13 +293,14 @@ int main(int argc, char** argv)
 	test_timespec();
 	#endif
 	test_ll();
+	test_bitfuncs();
 
 	/* misc tests */
 	sleep_ms(1000);
-	assert(strcmp_nocase("ASD", "aSd") == 0);
-	assert(strcmp_nocase("BSD", "asd") > 0);
-	assert(strcmp_nocase("ASD", "bsd") < 0);
-	assert(strncmp_nocase("ASDn", "asd", 3) == 0);
-	assert(strncmp_nocase("ASDn", "asd", 4) >0);
+	assert(cutil_strcasecmp("ASD", "aSd") == 0);
+	assert(cutil_strcasecmp("BSD", "asd") > 0);
+	assert(cutil_strcasecmp("ASD", "bsd") < 0);
+	assert(cutil_strncasecmp("ASDn", "asd", 3) == 0);
+	assert(cutil_strncasecmp("ASDn", "asd", 4) >0);
 	return 0;
 }

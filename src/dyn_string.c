@@ -75,41 +75,39 @@ bool string_concat(String* string, const String* other)
 	return true;
 }
 
-size_t* string_find_char(const String* haystack, const char needle)
+bool string_find_char(const String* haystack, const char needle, size_t* pos)
 {
-	size_t i, *ret;
+	size_t i;
 
 	for(i = 0; i < haystack->length; i++)
 	{
 		if(haystack->chars[i] == needle)
 		{
-			ret = malloc(sizeof(*ret));
-			*ret = i;
-			return ret;
+			*pos = i;
+			return true;
 		}
 	}
-	return NULL;
+	return false;
 }
 
-size_t* string_find_str(const String* haystack, const String* needle)
+bool string_find_str(const String* haystack, const String* needle, size_t* pos)
 {
-	size_t *ret, i, j, tmp;
+	size_t i, j, tmp;
 
 	for(i = 0; i < haystack->length; i++)
 	{
-		for(j = 0, tmp = i; j < needle->length; j++, i++)
+		for(j = 0, tmp = i; j < needle->length && i < haystack->length; j++, i++)
 		{
 			if(haystack->chars[i] != needle->chars[j])
 			{
 				break;
 			} else if(j == needle->length-1){
-				ret = malloc(sizeof(*ret));
-				*ret = tmp;
-				return ret;
+				*pos = tmp;
+				return true;
 			}
 		}
 	}
-	return NULL;
+	return false;
 }
 
 bool string_adjust_size(String* string, size_t size)
@@ -117,7 +115,7 @@ bool string_adjust_size(String* string, size_t size)
 	while(string->capacity < size)
 	{
 		char* tmp = string->chars;
-		string->chars = reallocsafe_inc(string->chars, sizeof(*string->chars), string->capacity, string->capacity);
+		string->chars = cutil_reallocarray_inc(string->chars, sizeof(*string->chars), string->capacity, string->capacity);
 		if(!string->chars)
 		{
 			string->chars = tmp;

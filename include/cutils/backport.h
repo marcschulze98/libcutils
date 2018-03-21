@@ -1,5 +1,5 @@
-#ifndef BACKPORT_H
-#define BACKPORT_H
+#ifndef CUTILS_BACKPORT_H
+#define CUTILS_BACKPORT_H
 
 #include <limits.h>
 #if __STDC_VERSION__ >= 199901L
@@ -116,4 +116,4 @@
 #endif
 
 
-#endif /* BACKPORT_H */
+#endif /* CUTILS_BACKPORT_H */

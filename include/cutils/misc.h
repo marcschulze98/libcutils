@@ -1,5 +1,5 @@
-#ifndef MISC_H
-#define MISC_H
+#ifndef CUTILS_MISC_H
+#define CUTILS_MISC_H
 
 #ifdef __unix__
 	#ifndef _BSD_SOURCE
@@ -19,6 +19,16 @@
 #include <cutils/common.h>
 #include <ctype.h>
 
+typedef unsigned char byte;
+
+#ifndef CUTILS_NO_SHORTHANDLES
+typedef unsigned char uchar;
+typedef unsigned short ushort;
+typedef unsigned int uint;
+typedef unsigned long ulong;
+typedef unsigned long long ullong;
+#endif /* CUTILS_NO_SHORTHANDLES */
+
 #if __STDC_VERSION__ >= 199901L
 	#ifdef UINT32_MAX
 		uint32_t ntoh32(uint32_t const net);
@@ -26,7 +36,7 @@
 	HEDLEY_INLINE
 	static void memqswap_stack(void* item1, void* item2, size_t length)
 	{
-		unsigned char tmp[length];
+		byte tmp[length];
 		memcpy(tmp, item1, length);
 		memcpy(item1, item2, length);
 		memcpy(item2, tmp, length);
@@ -36,8 +46,8 @@
 HEDLEY_INLINE
 static void memswap(void* item1, void* item2, size_t length)
 {
-	unsigned char *item1_tmp, *item2_tmp;
-	unsigned char tmp;
+	byte *item1_tmp, *item2_tmp;
+	byte tmp;
 
 	item1_tmp = item1;
 	item2_tmp = item2;
@@ -70,4 +80,4 @@ void sleep_ms(unsigned int milliseconds);
 	uintmax_t timespec_ms(const struct timespec* ts);
 #endif
 
-#endif /* MISC_H */
+#endif /* CUTILS_MISC_H */
