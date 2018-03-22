@@ -38,13 +38,20 @@ void delete_bytearray(Bytearray* bytearray, void(*rmv_el) (void*))
 	free(bytearray);
 }
 
-void* bytearray_at(const Bytearray* bytearray, size_t index)
+void bytearray_remove_range(Bytearray* bytearray, size_t index, size_t length, void (*rmv)(void*))
 {
-	if(index >= bytearray->length)
-		return NULL;
-	else
-		return bytearray->items+(index*bytearray->element_size);
+	size_t i;
+	if(rmv)
+	{
+		for(i = index; i < length; i++)
+		{
+			rmv(bytearray_at(bytearray, i));
+		}
+	}
+	memmove(bytearray->items+index, bytearray->items+index+length, (bytearray->length-(index+length))*sizeof(*bytearray->items));
+	bytearray->length -= length;
 }
+
 
 void* bytearray_pop_at(Bytearray* bytearray, size_t index, void* retptr)
 {
@@ -75,20 +82,6 @@ bool bytearray_insert(Bytearray* bytearray, size_t index, const void* item)
 	memcpy(bytearray->items+index*size, item, bytearray->element_size);
 	bytearray->length++;
 	return true;
-}
-
-void bytearray_remove(Bytearray* bytearray, size_t index, void (*rmv)(void*))
-{
-	if(index < bytearray->length)
-	{
-		size_t length = bytearray->length;
-		size_t elsize = bytearray->element_size;
-		if(rmv)
-			rmv(&bytearray->items[index*elsize]);
-
-		memmove(bytearray->items+index*elsize, bytearray->items+index*elsize+1*elsize, length*elsize-index*elsize-1*elsize);
-		bytearray->length--;
-	}
 }
 
 bool bytearray_adjust_size(Bytearray* bytearray, size_t size)

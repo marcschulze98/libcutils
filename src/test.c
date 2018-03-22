@@ -112,6 +112,19 @@ static void test_string(void)
 
 	delete_string(string2);
 	delete_string(string);
+
+	string = from_cstring("abcd");
+	assert(string->length == 4);
+	string_remove_range(string, 0, string->length);
+	assert(string->length == 0);
+	delete_string(string);
+
+	string = from_cstring("bba");
+	string_strip(string, 'a');
+	assert(string->length == 2);
+
+	cstring = to_cstring_del(string);
+	free(cstring);
 }
 
 static void test_bytearray(void)
@@ -148,13 +161,17 @@ static void test_bytearray(void)
 	assert(*tmpchar == 'a');
 	free(tmpchar);
 
-	tmpchar = bytearray_pop(bt, NULL);
-	assert(tmpchar == NULL);
-
 	bytearray_push(bt, "a");
 	tmpchar = bytearray_pop(bt, NULL);
 	assert(*tmpchar == 'a');
 	free(tmpchar);
+
+	bytearray_push(bt, "a");
+	bytearray_push(bt, "a");
+	bytearray_push(bt, "a");
+	assert(bt->length == 3);
+	bytearray_remove_range(bt, 0, bt->length, NULL);
+	assert(bt->length == 0);
 
 	delete_bytearray(bt, NULL);
 }
@@ -242,6 +259,7 @@ static void test_ll(void)
 
 
 		ll_remove_range(ll, 0, ll->length-1, NULL);
+		assert(ll->length == 1);
 
 		delete_ll(ll, NULL);
 	}

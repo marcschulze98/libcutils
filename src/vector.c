@@ -17,14 +17,6 @@ Vector* vector_with_capacity(size_t capacity)
 	return vector;
 }
 
-void* vector_at(const Vector* vector, size_t index)
-{
-	if(index >= vector->length)
-		return NULL;
-	else
-		return vector->items[index];
-}
-
 void* vector_pop_at(Vector* vector, size_t index)
 {
 	void* tmp = vector_at(vector, index);
@@ -37,25 +29,18 @@ void* vector_pop_at(Vector* vector, size_t index)
 	}
 }
 
-
-void vector_remove(Vector* vector, size_t index, void (*rmv)(void*))
-{
-	if(index < vector->length)
-	{
-		if(rmv)
-			rmv(vector->items[index]);
-		memmove(vector->items+index, vector->items+index+1, (vector->length-index-1)*sizeof(*vector->items));
-		vector->length--;
-	}
-}
-/* TODO: optimize */
 void vector_remove_range(Vector* vector, size_t index, size_t length, void (*rmv)(void*))
 {
 	size_t i;
-	for(i = 0; i < length; i++)
+	if(rmv)
 	{
-		vector_remove(vector, index+i, rmv);
+		for(i = index; i < length; i++)
+		{
+			rmv(vector_at(vector, i));
+		}
 	}
+	memmove(vector->items+index, vector->items+index+length, (vector->length-(index+length))*sizeof(*vector->items));
+	vector->length -= length;
 }
 
 size_t* vector_find(const Vector* haystack, const void* needle, int (*cmp)(const void*, const void*))

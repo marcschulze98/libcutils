@@ -18,14 +18,28 @@ typedef struct Vector
 Vector* vector_with_capacity(size_t capacity);
 void delete_vector(Vector* vector, void(*rmv) (void*));
 
-void* vector_at(const Vector* vector, size_t index);
+HEDLEY_INLINE
+static void* vector_at(const Vector* vector, size_t index)
+{
+	return vector->items[index];
+}
 #define vector_pop(vector) vector_pop_at(vector, vector->length-1)
 void* vector_pop_at(Vector* vector, size_t index);
 
 bool vector_insert(Vector* vector, size_t index, void* item);
 #define vector_push(vector, item) vector_insert(vector, vector->length, item)
 
-void vector_remove(Vector* vector, size_t index, void (*rmv)(void*));
+HEDLEY_INLINE
+static void vector_remove(Vector* vector, size_t index, void (*rmv)(void*))
+{
+	if(index < vector->length)
+	{
+		if(rmv)
+			rmv(vector->items[index]);
+		memmove(vector->items+index, vector->items+index+1, (vector->length-index-1)*sizeof(*vector->items));
+		vector->length--;
+	}
+}
 void vector_remove_range(Vector* vector, size_t index, size_t length, void (*rmv)(void*));
 
 bool vector_adjust_size(Vector* vector, size_t size);

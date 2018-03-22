@@ -19,14 +19,32 @@ typedef struct Bytearray
 Bytearray* bytearray_with_capacity(size_t capacity, size_t element_size);
 void delete_bytearray(Bytearray* bytearray, void(*rmv_el) (void*));
 
-void* bytearray_at(const Bytearray* bytearray, size_t index);
+HEDLEY_INLINE
+static void* bytearray_at(const Bytearray* bytearray, size_t index)
+{
+	return bytearray->items+(index*bytearray->element_size);
+}
 #define bytearray_pop(bytearray, retptr) bytearray_pop_at(bytearray, bytearray->length-1, retptr)
 void* bytearray_pop_at(Bytearray* bytearray, size_t index, void* retptr);
 
 #define bytearray_push(bytearray, item) bytearray_insert(bytearray, bytearray->length, item)
 bool bytearray_insert(Bytearray* bytearray, size_t index, const void* item);
 
-void bytearray_remove(Bytearray* bytearray, size_t index, void (*rmv)(void*));
+HEDLEY_INLINE
+static void bytearray_remove(Bytearray* bytearray, size_t index, void (*rmv)(void*))
+{
+	if(index < bytearray->length)
+	{
+		size_t length = bytearray->length;
+		size_t elsize = bytearray->element_size;
+		if(rmv)
+			rmv(&bytearray->items[index*elsize]);
+
+		memmove(bytearray->items+index*elsize, bytearray->items+index*elsize+1*elsize, length*elsize-index*elsize-1*elsize);
+		bytearray->length--;
+	}
+}
+void bytearray_remove_range(Bytearray* bytearray, size_t index, size_t length, void (*rmv)(void*));
 
 bool bytearray_adjust_size(Bytearray* bytearray, size_t size);
 bool bytearray_shrink(Bytearray* bytearray);
