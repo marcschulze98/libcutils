@@ -12,10 +12,11 @@ typedef struct String
 	char* chars;
 	size_t capacity;
 	size_t length;
+	bool null_terminated;
 } String;
 
-#define new_string() string_with_capacity(STRING_DEFAULT_SIZE)
-String* string_with_capacity(size_t capacity);
+#define new_string(null_terminated) string_with_capacity(STRING_DEFAULT_SIZE, null_terminated)
+String* string_with_capacity(size_t capacity, bool null_terminated);
 void delete_string(String* string);
 
 HEDLEY_INLINE
@@ -35,7 +36,7 @@ static void string_remove(String* string, size_t index)
 {
 	if(index < string->length)
 	{
-		memmove(string->chars+index, string->chars+index+1, (string->length-index-1)*sizeof(*string->chars));
+		memmove(string->chars+index, string->chars+index+1, (string->length-index-1+(string->null_terminated?1:0))*sizeof(*string->chars));
 		string->length--;
 	}
 }
@@ -59,9 +60,9 @@ size_t string_count(const String* string, char character);
 
 bool string_concat(String* string, const String* other);
 
-String* from_cstring(const char* cstring);
-String* from_cstring_reuse(char* cstring, size_t capacity);
-String* from_cstring_del(char* cstring);
+String* from_cstring(const char* cstring, bool null_terminated);
+String* from_cstring_reuse(char* cstring, size_t capacity, bool null_terminated);
+String* from_cstring_del(char* cstring, bool null_terminated);
 char* to_cstring(const String* string);
 char* to_cstring_del(String* string);
 void string_move(String* dest, String* src);

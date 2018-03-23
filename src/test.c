@@ -71,66 +71,87 @@ static void test_string(void)
 	String* string2;
 	char* cstring;
 	size_t tmp;
+	bool truth;
 
-	string = new_string();
+	for(truth = false; truth == false || truth == true; truth++)
+	{
+		string = new_string(truth);
 
+		string_push(string, 'a');
+		string_push(string, 'b');
+		string_push(string, 'c');
+		string_push(string, 'd');
+		assert(string->length == 4);
+
+		cstring = to_cstring(string);
+		assert(strcmp(cstring, "abcd") == 0);
+		free(cstring);
+
+		string_remove(string, 3);
+		cstring = to_cstring(string);
+		assert(strcmp(cstring, "abc") == 0);
+		free(cstring);
+		assert(string->length == 3);
+
+		string_insert(string, 0,'a');
+		cstring = to_cstring(string);
+		assert(strcmp(cstring, "aabc") == 0);
+		free(cstring);
+		string2 = from_cstring("xyz", truth);
+
+		string_concat(string,string2);
+		cstring = to_cstring(string);
+		assert(strcmp(cstring, "aabcxyz") == 0);
+		free(cstring);
+
+		delete_string(string2);
+		delete_string(string);
+
+		string = from_cstring("abcd", truth);
+		string2 = from_cstring("cd", truth);
+		assert(string_find_str(string, string2, &tmp));
+		assert(tmp == 2);
+
+		delete_string(string2);
+		delete_string(string);
+
+		string = from_cstring("abcd", truth);
+		assert(string->length == 4);
+		string_remove_range(string, 0, string->length);
+		assert(string->length == 0);
+		delete_string(string);
+
+		string = from_cstring("bba", truth);
+		string_strip(string, 'a');
+		assert(string->length == 2);
+
+		cstring = to_cstring_del(string);
+		free(cstring);
+
+
+		string = from_cstring("asdyx782", truth);
+		string2 = from_cstring("asdyx782", truth);
+		assert(string_cmp(string, string2) == 0);
+		delete_string(string2);
+		delete_string(string);
+	}
+
+	string = from_cstring("asdyx782", true);
 	string_push(string, 'a');
-	string_push(string, 'b');
-	string_push(string, 'c');
-	string_push(string, 'd');
-	assert(string->length == 4);
-
-	cstring = to_cstring(string);
-	assert(strcmp(cstring, "abcd") == 0);
-	free(cstring);
-
-	string_remove(string, 3);
-	cstring = to_cstring(string);
-	assert(strcmp(cstring, "abc") == 0);
-	free(cstring);
-	assert(string->length == 3);
-
-	string_insert(string, 0,'a');
-	cstring = to_cstring(string);
-	assert(strcmp(cstring, "aabc") == 0);
-	free(cstring);
-
-	string2 = from_cstring("xyz");
-
-	string_concat(string,string2);
-	cstring = to_cstring(string);
-	assert(strcmp(cstring, "aabcxyz") == 0);
-	free(cstring);
+	string_remove(string, 2);
+	assert(strcmp(string->chars, "asyx782a") == 0);
+	string_remove_range(string, 1, 7);
+	assert(strcmp(string->chars, "a") == 0);
+	assert(string_pop(string) == 'a');
+	string2 = from_cstring("asdasdas", false);
+	string_concat(string, string2);
+	assert(strcmp(string->chars, "asdasdas") == 0);
 
 	delete_string(string2);
-	delete_string(string);
+	string2 = from_cstring("koasä_ #", true);
+	string_move(string, string2);
+	assert(strcmp(string->chars, "koasä_ #") == 0);
 
-	string = from_cstring("abcd");
-	string2 = from_cstring("cd");
-	assert(string_find_str(string, string2, &tmp));
-	assert(tmp == 2);
-
-	delete_string(string2);
-	delete_string(string);
-
-	string = from_cstring("abcd");
-	assert(string->length == 4);
-	string_remove_range(string, 0, string->length);
-	assert(string->length == 0);
-	delete_string(string);
-
-	string = from_cstring("bba");
-	string_strip(string, 'a');
-	assert(string->length == 2);
-
-	cstring = to_cstring_del(string);
-	free(cstring);
-
-
-	string = from_cstring("asdyx782");
-	string2 = from_cstring("asdyx782");
-	assert(string_cmp(string, string2) == 0);
-	delete_string(string2);
 	delete_string(string);
 }
 

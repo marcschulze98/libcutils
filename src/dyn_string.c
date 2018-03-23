@@ -1,25 +1,28 @@
 #include <cutils/dyn_string.h>
 
-String* string_with_capacity(size_t capacity)
+String* string_with_capacity(size_t capacity, bool null_terminated)
 {
 	String* string = malloc(sizeof(*string));
 	if(!string)
 		return NULL;
-	string->chars = calloc(capacity,sizeof(*string->chars));
+	string->chars = malloc(capacity+(null_terminated?1:0));
 	if(!string->chars)
 	{
 		free(string);
 		return NULL;
 	}
+	if(null_terminated)
+		string->chars[0] = '\0';
 	string->length = 0;
 	string->capacity = capacity;
+	string->null_terminated = null_terminated;
 
 	return string;
 }
 
 void string_remove_range(String* string, size_t index, size_t length)
 {
-	memmove(string->chars+index, string->chars+index+length, (string->length-(index+length)));
+	memmove(string->chars+index, string->chars+index+length, (string->length-(index+length)+(string->null_terminated?1:0)));
 	string->length -= length;
 }
 
@@ -44,7 +47,7 @@ size_t string_strip(String* string, char character)
 		}
 	}
 
-	memmove(string->chars+last-offset, string->chars+last+1, string->length-last-1);
+	memmove(string->chars+last-offset, string->chars+last+1, string->length-last-1+(string->null_terminated?1:0));
 
 	string->length -= offset+(first ? 0 : 1);
 	return offset;
@@ -52,10 +55,10 @@ size_t string_strip(String* string, char character)
 
 bool string_insert(String* string, size_t index, char character)
 {
-	if(index > string->length || string->length == SIZE_MAX || !string_adjust_size(string, string->length))
+	if(index > string->length || string->length == SIZE_MAX || !string_adjust_size(string, string->length+1))
 		return false;
 
-	memmove(string->chars+index+1, string->chars+index, (string->length-index)*sizeof(*string->chars));
+	memmove(string->chars+index+1, string->chars+index, (string->length-index+(string->null_terminated?1:0))*sizeof(*string->chars));
 	string->chars[index] = character;
 	string->length++;
 	return true;
@@ -64,13 +67,8 @@ bool string_insert(String* string, size_t index, char character)
 char string_pop_at(String* string, size_t index)
 {
 	char tmp = string_at(string, index);
-	if(!tmp)
-	{
-		return '\0';
-	} else {
-		string_remove(string, index);
-		return tmp;
-	}
+	string_remove(string, index);
+	return tmp;
 }
 
 bool string_concat(String* string, const String* other)
@@ -79,6 +77,7 @@ bool string_concat(String* string, const String* other)
 		return false;
 	memcpy(string->chars+string->length,other->chars,other->length);
 	string->length += other->length;
+	string->chars[string->length] = '\0';
 	return true;
 }
 
@@ -110,7 +109,10 @@ size_t string_count(const String* string, char character)
 
 bool string_adjust_size(String* string, size_t size)
 {
-	while(string->capacity < size)
+	if(size == SIZE_MAX && string->null_terminated)
+		return false;
+
+	while(string->capacity < size+(string->null_terminated?1:0))
 	{
 		char* tmp = string->chars;
 		string->chars = cutil_reallocarray_inc(string->chars, sizeof(*string->chars), string->capacity, string->capacity);
@@ -131,20 +133,22 @@ void delete_string(String* string)
 	free(string);
 }
 
-String* from_cstring(const char* cstring)
+String* from_cstring(const char* cstring, bool null_terminated)
 {
-	String* string = string_with_capacity(strlen(cstring));
+	String* string = string_with_capacity(strlen(cstring), null_terminated);
 	if(!string)
 	{
 		return NULL;
 	} else {
 		memcpy(string->chars, cstring, strlen(cstring));
 		string->length = strlen(cstring);
+		if(null_terminated)
+			string->chars[string->length] = '\0';
 		return string;
 	}
 }
 
-String* from_cstring_reuse(char* cstring, size_t capacity)
+String* from_cstring_reuse(char* cstring, size_t capacity, bool null_terminated)
 {
 	String* string;
 
@@ -161,9 +165,11 @@ String* from_cstring_reuse(char* cstring, size_t capacity)
 	return string;
 }
 
-String* from_cstring_del(char* cstring)
+String* from_cstring_del(char* cstring, bool null_terminated)
 {
-	String* ret = from_cstring(cstring);
+	String* ret = from_cstring(cstring, null_terminated);
+	if(!ret)
+		return NULL;
 	free(cstring);
 	return ret;
 }
