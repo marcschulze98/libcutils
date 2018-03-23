@@ -43,6 +43,7 @@ static void string_remove(String* string, size_t index)
 void string_remove_range(String* string, size_t index, size_t length);
 size_t string_strip(String* string, char character);
 
+bool string_grow(String* string, size_t add);
 bool string_adjust_size(String* string, size_t size);
 bool string_find_char(const String* haystack, const char needle, size_t* pos);
 HEDLEY_INLINE

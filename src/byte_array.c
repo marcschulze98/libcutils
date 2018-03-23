@@ -75,13 +75,20 @@ bool bytearray_insert(Bytearray* bytearray, size_t index, const void* item)
 	size_t length = bytearray->length;
 	size_t size = bytearray->element_size;
 
-	if(index > length || length == SIZE_MAX || !bytearray_adjust_size(bytearray, length+1))
+	if(index > length || !bytearray_grow(bytearray, 1))
 		return false;
 
 	memmove(bytearray->items+index*size+1*size, bytearray->items+index*size, (length*size-index*size)*sizeof(*bytearray->items));
 	memcpy(bytearray->items+index*size, item, bytearray->element_size);
 	bytearray->length++;
 	return true;
+}
+
+bool bytearray_grow(Bytearray* bytearray, size_t add)
+{
+	if(bytearray->length+add < bytearray->length)
+		return false;
+	return bytearray_adjust_size(bytearray, bytearray->length+add);
 }
 
 bool bytearray_adjust_size(Bytearray* bytearray, size_t size)

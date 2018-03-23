@@ -61,13 +61,20 @@ size_t* vector_find(const Vector* haystack, const void* needle, int (*cmp)(const
 
 bool vector_insert(Vector* vector, size_t index, void* item)
 {
-	if(index > vector->length || vector->length == SIZE_MAX || !vector_adjust_size(vector, vector->length+1))
+	if(index > vector->length || !vector_grow(vector, 1))
 		return false;
 
 	memmove(vector->items+index+1, vector->items+index, (vector->length-index)*sizeof(*vector->items));
 	vector->items[index] = item;
 	vector->length++;
 	return true;
+}
+
+bool vector_grow(Vector* vector, size_t add)
+{
+	if(vector->length+add < vector->length)
+		return false;
+	return vector_adjust_size(vector, vector->length+add);
 }
 
 bool vector_adjust_size(Vector* vector, size_t size)

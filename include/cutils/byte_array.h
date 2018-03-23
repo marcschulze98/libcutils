@@ -46,6 +46,7 @@ static void bytearray_remove(Bytearray* bytearray, size_t index, void (*rmv)(voi
 }
 void bytearray_remove_range(Bytearray* bytearray, size_t index, size_t length, void (*rmv)(void*));
 
+bool bytearray_grow(Bytearray* bytearray, size_t add);
 bool bytearray_adjust_size(Bytearray* bytearray, size_t size);
 bool bytearray_shrink(Bytearray* bytearray);
 HEDLEY_NON_NULL(3)

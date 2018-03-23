@@ -55,7 +55,7 @@ size_t string_strip(String* string, char character)
 
 bool string_insert(String* string, size_t index, char character)
 {
-	if(index > string->length || string->length == SIZE_MAX || !string_adjust_size(string, string->length+1))
+	if(index > string->length || !string_grow(string, 1))
 		return false;
 
 	memmove(string->chars+index+1, string->chars+index, (string->length-index+(string->null_terminated?1:0))*sizeof(*string->chars));
@@ -73,7 +73,9 @@ char string_pop_at(String* string, size_t index)
 
 bool string_concat(String* string, const String* other)
 {
-	if(!string_adjust_size(string,string->length+other->length-1))
+	if(other->length == 0)
+		return true;
+	if(!string_grow(string, other->length-1))
 		return false;
 	memcpy(string->chars+string->length,other->chars,other->length);
 	string->length += other->length;
@@ -105,6 +107,13 @@ size_t string_count(const String* string, char character)
 			ret++;
 	}
 	return ret;
+}
+
+bool string_grow(String* string, size_t add)
+{
+	if(string->length+add < string->length)
+		return false;
+	return string_adjust_size(string, string->length+add);
 }
 
 bool string_adjust_size(String* string, size_t size)
