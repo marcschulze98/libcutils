@@ -75,6 +75,33 @@ char* cutil_strndup(const char *s, size_t n)
 	return ret;
 }
 
+bool cutil_memmem(const void* haystack, size_t haystacklen, const void* needle, size_t needlelen, size_t* pos)
+{
+	size_t i, j, tmp;
+	const byte* haystackb = haystack;
+	const byte* needleb = needle;
+
+
+	if (haystacklen == 0 || needlelen == 0)
+		return false;
+
+	for(i = 0; i < haystacklen; i++)
+	{
+		for(j = 0, tmp = i; j < needlelen && i < haystacklen; j++, i++)
+		{
+			if(haystackb[i] != needleb[j])
+			{
+				break;
+			} else if(j == needlelen-1){
+				*pos = tmp;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 #if __STDC_VERSION__ >= 199901L
 int cutil_asprintf(char** strp, const char* format, ...)
 {

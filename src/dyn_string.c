@@ -97,26 +97,6 @@ bool string_find_char(const String* haystack, const char needle, size_t* pos)
 	return false;
 }
 
-bool string_find_str(const String* haystack, const String* needle, size_t* pos)
-{
-	size_t i, j, tmp;
-
-	for(i = 0; i < haystack->length; i++)
-	{
-		for(j = 0, tmp = i; j < needle->length && i < haystack->length; j++, i++)
-		{
-			if(haystack->chars[i] != needle->chars[j])
-			{
-				break;
-			} else if(j == needle->length-1){
-				*pos = tmp;
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
 size_t string_count(const String* string, char character)
 {
 	size_t i, ret = 0;

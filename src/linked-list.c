@@ -306,7 +306,6 @@ void sll_swap(LinkedList* ll, size_t item1, size_t item2)
 {
 	size_t i, first_index, second_index;
 	SLnode *first, *second;
-	void* tmp;
 
 	first_index = item1 <= item2 ? item1 : item2;
 	second_index = item1 <= item2 ? item2 : item1;
@@ -324,11 +323,7 @@ void sll_swap(LinkedList* ll, size_t item1, size_t item2)
 	if(!first)
 		first = second;
 
-	tmp = first->item;
-	first->item = second->item;
-	second->item = tmp;
-
-	/*memswap(&first->item, &second->item, sizeof(first->item));*/
+	memswap(&first->item, &second->item, sizeof(first->item));
 }
 
 void dll_swap(LinkedList* ll, size_t item1, size_t item2)

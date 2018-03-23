@@ -43,10 +43,13 @@ void string_remove_range(String* string, size_t index, size_t length);
 size_t string_strip(String* string, char character);
 
 bool string_adjust_size(String* string, size_t size);
-/* TODO: rework find functions to take extra argument of result count
- * and then find that many and return them in a vector/linked list */
 bool string_find_char(const String* haystack, const char needle, size_t* pos);
-bool string_find_str(const String* haystack, const String* needle, size_t* pos);
+HEDLEY_INLINE
+static bool string_find_str(const String* haystack, const String* needle, size_t* pos)
+{
+	return cutil_memmem(haystack->chars, haystack->length, needle->chars, needle->length, pos);
+}
+
 size_t string_count(const String* string, char character);
 
 bool string_concat(String* string, const String* other);

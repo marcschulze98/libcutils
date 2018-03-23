@@ -107,7 +107,7 @@ static void test_string(void)
 
 	string = from_cstring("abcd");
 	string2 = from_cstring("cd");
-	string_find_str(string, string2, &tmp);
+	assert(string_find_str(string, string2, &tmp));
 	assert(tmp == 2);
 
 	delete_string(string2);
