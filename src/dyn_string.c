@@ -142,7 +142,23 @@ String* from_cstring(const char* cstring)
 		string->length = strlen(cstring);
 		return string;
 	}
+}
 
+String* from_cstring_reuse(char* cstring, size_t capacity)
+{
+	String* string;
+
+	if(cstring)
+		return NULL;
+
+	string = malloc(sizeof(*string));
+	if(!string)
+		return NULL;
+
+	string->length = strlen(cstring);
+	string->capacity = capacity;
+
+	return string;
 }
 
 String* from_cstring_del(char* cstring)
@@ -166,4 +182,11 @@ char* to_cstring_del(String* string)
 	char* ret = to_cstring(string);
 	delete_string(string);
 	return ret;
+}
+
+void string_move(String* dest, String* src)
+{
+	free(dest->chars);
+	dest->chars = src->chars;
+	free(src);
 }

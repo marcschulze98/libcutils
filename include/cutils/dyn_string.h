@@ -49,15 +49,21 @@ static bool string_find_str(const String* haystack, const String* needle, size_t
 {
 	return cutil_memmem(haystack->chars, haystack->length, needle->chars, needle->length, pos);
 }
+HEDLEY_INLINE
+static int string_cmp(const String* s1, const String* s2)
+{
+	return memcmp(s1->chars, s2->chars, s1->length);
+}
 
 size_t string_count(const String* string, char character);
 
 bool string_concat(String* string, const String* other);
 
 String* from_cstring(const char* cstring);
+String* from_cstring_reuse(char* cstring, size_t capacity);
 String* from_cstring_del(char* cstring);
 char* to_cstring(const String* string);
 char* to_cstring_del(String* string);
-
+void string_move(String* dest, String* src);
 
 #endif /* CUTILS_DYN_STRING_H */

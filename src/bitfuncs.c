@@ -13,6 +13,8 @@ char* _bitstring(size_t size, uintmax_t value)
 		{
 			leading_zero = false;
 			ret = malloc(size-i);
+			if(!ret)
+				return NULL;
 			ret[size-i-1] = '\0';
 		}
 		if(!leading_zero)

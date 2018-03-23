@@ -125,6 +125,13 @@ static void test_string(void)
 
 	cstring = to_cstring_del(string);
 	free(cstring);
+
+
+	string = from_cstring("asdyx782");
+	string2 = from_cstring("asdyx782");
+	assert(string_cmp(string, string2) == 0);
+	delete_string(string2);
+	delete_string(string);
 }
 
 static void test_bytearray(void)
