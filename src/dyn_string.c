@@ -83,20 +83,27 @@ bool string_concat(String* string, const String* other)
 	return true;
 }
 
-bool string_find_char(const String* haystack, const char needle, size_t* pos)
+bool string_find_char(const String* haystack, char needle, size_t* pos)
 {
-	size_t i;
-
-	for(i = 0; i < haystack->length; i++)
+	char* ret = memchr(haystack->chars, needle, haystack->length);
+	if(!ret)
 	{
-		if(haystack->chars[i] == needle)
-		{
-			*pos = i;
-			return true;
-		}
+		return false;
+	} else {
+		*pos = (size_t)(ret-haystack->chars);
+		return true;
 	}
-	return false;
 }
+
+int string_cmp(const String* s1, const String* s2)
+{
+	int ret = memcmp(s1->chars, s2->chars, s1->length < s2->length ? s1->length : s2->length);
+	if(ret == 0 && s1->length != s2->length)
+		return s1->length < s2->length ? -1 : 1;
+	else
+		return ret;
+}
+
 
 size_t string_count(const String* string, char character)
 {
@@ -161,13 +168,14 @@ String* from_cstring_reuse(char* cstring, size_t capacity, bool null_terminated)
 {
 	String* string;
 
-	if(cstring)
+	if(!cstring)
 		return NULL;
 
 	string = malloc(sizeof(*string));
 	if(!string)
 		return NULL;
 
+	string->chars = cstring;
 	string->length = strlen(cstring);
 	string->capacity = capacity;
 

@@ -15,7 +15,6 @@ typedef struct String
 	bool null_terminated;
 } String;
 
-#define new_string(null_terminated) string_with_capacity(STRING_DEFAULT_SIZE, null_terminated)
 String* string_with_capacity(size_t capacity, bool null_terminated);
 void delete_string(String* string);
 
@@ -25,11 +24,9 @@ static char string_at(const String* string, size_t index)
 	return string->chars[index];
 }
 
-#define string_pop(string) string_pop_at(string, string->length-1)
 char string_pop_at(String* string, size_t index);
 
 bool string_insert(String* string, size_t index, char character);
-#define string_push(string, character) string_insert(string, string->length, character)
 
 HEDLEY_INLINE
 static void string_remove(String* string, size_t index)
@@ -45,17 +42,13 @@ size_t string_strip(String* string, char character);
 
 bool string_grow(String* string, size_t add);
 bool string_adjust_size(String* string, size_t size);
-bool string_find_char(const String* haystack, const char needle, size_t* pos);
+bool string_find_char(const String* haystack, char needle, size_t* pos);
 HEDLEY_INLINE
 static bool string_find_str(const String* haystack, const String* needle, size_t* pos)
 {
 	return cutil_memmem(haystack->chars, haystack->length, needle->chars, needle->length, pos);
 }
-HEDLEY_INLINE
-static int string_cmp(const String* s1, const String* s2)
-{
-	return memcmp(s1->chars, s2->chars, s1->length);
-}
+int string_cmp(const String* s1, const String* s2);
 
 size_t string_count(const String* string, char character);
 
@@ -67,5 +60,9 @@ String* from_cstring_del(char* cstring, bool null_terminated);
 char* to_cstring(const String* string);
 char* to_cstring_del(String* string);
 void string_move(String* dest, String* src);
+
+#define new_string(null_terminated) string_with_capacity(STRING_DEFAULT_SIZE, null_terminated)
+#define string_pop(string) string_pop_at(string, string->length-1)
+#define string_push(string, character) string_insert(string, string->length, character)
 
 #endif /* CUTILS_DYN_STRING_H */

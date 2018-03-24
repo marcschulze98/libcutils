@@ -15,7 +15,6 @@ typedef struct Bytearray
 	size_t element_size;
 } Bytearray;
 
-#define new_bytearray(element_size) bytearray_with_capacity(BYTEARRAY_DEFAULT_SIZE, element_size)
 Bytearray* bytearray_with_capacity(size_t capacity, size_t element_size);
 void delete_bytearray(Bytearray* bytearray, void(*rmv_el) (void*));
 
@@ -24,10 +23,8 @@ static void* bytearray_at(const Bytearray* bytearray, size_t index)
 {
 	return bytearray->items+(index*bytearray->element_size);
 }
-#define bytearray_pop(bytearray, retptr) bytearray_pop_at(bytearray, bytearray->length-1, retptr)
 void* bytearray_pop_at(Bytearray* bytearray, size_t index, void* retptr);
 
-#define bytearray_push(bytearray, item) bytearray_insert(bytearray, bytearray->length, item)
 bool bytearray_insert(Bytearray* bytearray, size_t index, const void* item);
 
 HEDLEY_INLINE
@@ -52,6 +49,9 @@ bool bytearray_shrink(Bytearray* bytearray);
 HEDLEY_NON_NULL(3)
 size_t* bytearray_find(const Bytearray* haystack, const void* needle, int (*cmp)(const void*, const void*));
 
+#define new_bytearray(element_size) bytearray_with_capacity(BYTEARRAY_DEFAULT_SIZE, element_size)
+#define bytearray_pop(bytearray, retptr) bytearray_pop_at(bytearray, bytearray->length-1, retptr)
+#define bytearray_push(bytearray, item) bytearray_insert(bytearray, bytearray->length, item)
 
 #endif /* CUTILS_BYTE_ARRAY_H */
 

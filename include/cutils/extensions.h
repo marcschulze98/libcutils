@@ -47,7 +47,7 @@ static void* cutil_reallocarray_inc(void *ptr, size_t nmemb, size_t size, size_t
 		errno = ENOMEM;
 		return NULL;
 	} else {
-		return cutil_reallocarray(ptr, nmemb, size+add);
+		return cutil_reallocarray(ptr, nmemb+add, size);
 	}
 }
 

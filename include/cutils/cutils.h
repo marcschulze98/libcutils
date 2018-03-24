@@ -9,5 +9,6 @@
 #include <cutils/extensions.h>
 #include <cutils/backport.h>
 #include <cutils/bitfuncs.h>
+#include <cutils/math.h>
 
 #endif /* CUTILS_CUTILS_H */

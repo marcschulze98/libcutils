@@ -153,6 +153,13 @@ static void test_string(void)
 	assert(strcmp(string->chars, "koasä_ #") == 0);
 
 	delete_string(string);
+
+	string = from_cstring_reuse("asdasdas1", strlen("asdasdas1"), false);
+	string2 = from_cstring_reuse("asdasdas", strlen("asdasdas"), false);
+	assert(string_cmp(string, string2) > 0);
+	free(string);
+	free(string2);
+
 }
 
 static void test_bytearray(void)
@@ -258,7 +265,7 @@ static void test_ll(void)
 {
 	LinkedList* ll;
 	struct test my_structa, my_structb, *my_structptr;
-	int truth;
+	bool truth;
 	my_structa.a = 5;
 	my_structa.b = 5;
 	my_structb.a = 7;
@@ -316,6 +323,7 @@ int main(int argc, char** argv)
 	/* memswap tests */
 	int a = 5;
 	int b = 2;
+	Bytearray* bt;
 	void* tmp =  malloc(sizeof(int));
 
 	memswap(&a, &b, sizeof(int));
@@ -348,5 +356,14 @@ int main(int argc, char** argv)
 	assert(cutil_strcasecmp("ASD", "bsd") < 0);
 	assert(cutil_strncasecmp("ASDn", "asd", 3) == 0);
 	assert(cutil_strncasecmp("ASDn", "asd", 4) >0);
+
+
+	assert(ipow(2,32) == 4294967296);
+	assert(isqrt(123123) == 350);
+	bt = primesieve(100000000);
+	assert(*(uintmax_t*)bytearray_at(bt, 312312) == 4444697);
+
+	delete_bytearray(bt, NULL);
+
 	return 0;
 }
