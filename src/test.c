@@ -71,7 +71,7 @@ static void test_string(void)
 	String* string2;
 	char* cstring;
 	size_t tmp;
-	bool truth;
+	int truth;
 
 	for(truth = false; truth == false || truth == true; truth++)
 	{
@@ -241,7 +241,7 @@ static void test_timespec(void)
 	ts2.tv_sec = 10;
 	ts2.tv_nsec = 999999999;
 
-	res = timespec_diff(&ts1, &ts2);
+	res = timespec_diff(&ts2, &ts1);
 	assert(res.tv_sec == 10 && res.tv_nsec == 999999998);
 
 	ts1.tv_sec = 0;
@@ -249,7 +249,7 @@ static void test_timespec(void)
 	ts2.tv_sec = 10;
 	ts2.tv_nsec = 1;
 
-	res = timespec_diff(&ts1, &ts2);
+	res = timespec_diff(&ts2, &ts1);
 	assert(res.tv_sec == 9 && res.tv_nsec == 2);
 
 	ts1.tv_sec = 0;
@@ -257,15 +257,18 @@ static void test_timespec(void)
 	ts2.tv_sec = 10;
 	ts2.tv_nsec = 999999999;
 
-	res = timespec_diff(&ts1, &ts2);
+	res = timespec_diff(&ts2, &ts1);
 	assert(res.tv_sec == 10 && res.tv_nsec == 999999998);
+
+	res = timespec_diff(&ts1, &ts2);
+	assert(res.tv_sec == 0 && res.tv_nsec == 0);
 }
 #endif
 static void test_ll(void)
 {
 	LinkedList* ll;
 	struct test my_structa, my_structb, *my_structptr;
-	bool truth;
+	int truth;
 	my_structa.a = 5;
 	my_structa.b = 5;
 	my_structb.a = 7;
@@ -303,19 +306,20 @@ static void test_ll(void)
 static void test_bitfuncs(void)
 {
 	byte tmp = 0;
+	uintmax_t tmp2 = UINTMAX_MAX;
 
-	setbit(byte, tmp, 0);
+	setbit(tmp, 0);
 	assert(tmp == 1);
-	setbit(byte, tmp, 1);
+	setbitc(tmp, 1, byte);
 	assert(tmp == 3);
-	setbit(byte, tmp, 2);
+	setbit(tmp, 2);
 	assert(tmp == 7);
 
-	clearbit(byte, tmp, 2);
-	assert(tmp == 3);
+	clearbit(tmp2, numbits(uintmax_t)-1);
+	assert(tmp2 == UINTMAX_MAX/2);
 
-	assert(getbit(byte, tmp, 0) == 1);
-	assert(getbit(byte, tmp, 5) == 0);
+	assert(getbit(tmp, 0) == 1);
+	assert(getbit(tmp, 5) == 0);
 }
 
 int main(int argc, char** argv)

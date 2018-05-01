@@ -68,14 +68,15 @@ static void memqswap(void* item1, void* item2, void* tmp, size_t length)
 	memcpy(item2, tmp, length);
 }
 
-#if __STDC_VERSION__ >= 201112L
-	#include <time.h>
-#endif
-
 void sleep_ms(unsigned int milliseconds);
 
 #if __STDC_VERSION__ >= 201112L
-	struct timespec timespec_diff(const struct timespec* old_ts, const struct timespec* new_ts);
+	#include <time.h>
+	bool timespec_bigger(const struct timespec* ts1, const struct timespec* ts2);
+	bool timespec_equal(const struct timespec* ts1, const struct timespec* ts2);
+	bool timespec_smaller(const struct timespec* ts1, const struct timespec* ts2);
+	/* subtracts ts2 from ts1, if ts2 > ts1 then zero is returned */
+	struct timespec timespec_diff(const struct timespec* ts1, const struct timespec* ts2);
 	struct timespec timespec_add(const struct timespec* ts_1, const struct timespec* ts_2);
 	uintmax_t timespec_ms(const struct timespec* ts);
 #endif

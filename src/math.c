@@ -2,7 +2,7 @@
 
 uintmax_t isqrt(uintmax_t n)
 {
-	uintmax_t start = 1, end = n/2, ans;
+	uintmax_t start = 1, end = n/2, ans = 0;
 	if(n == 0 || n == 1)
 		return n;
 
@@ -60,9 +60,9 @@ static void primesieve_set(byte* numbers, size_t index)
 
 static bool primesieve_get(byte* numbers, size_t index)
 {
-	return getbit(byte, (numbers[index/8] >> index%8), 0);
+	return getbit((numbers[index/8] >> index%8), 0);
 }
-#include <assert.h>
+
 Bytearray* primesieve(uintmax_t limit)
 {
 	size_t i, j, length = limit/8+1;
