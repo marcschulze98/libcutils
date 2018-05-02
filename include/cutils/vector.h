@@ -46,7 +46,7 @@ HEDLEY_NON_NULL(3)
 size_t* vector_find(const Vector* haystack, const void* needle, int (*cmp)(const void*, const void*));
 
 #define new_vector() vector_with_capacity(VECTOR_DEFAULT_SIZE)
-#define vector_pop(vector) vector_pop_at(vector, vector->length-1)
-#define vector_push(vector, item) vector_insert(vector, vector->length, item)
+#define vector_pop(vector) vector_pop_at(vector, ((Vector*)vector)->length-1)
+#define vector_push(vector, item) vector_insert(vector, ((Vector*)vector)->length, item)
 
 #endif /* CUTILS_VECTOR_H */

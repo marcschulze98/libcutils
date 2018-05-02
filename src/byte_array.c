@@ -75,7 +75,7 @@ bool bytearray_insert(Bytearray* bytearray, size_t index, const void* item)
 	size_t length = bytearray->length;
 	size_t size = bytearray->element_size;
 
-	if(index > length || !bytearray_grow(bytearray, 1))
+	if(!bytearray_grow(bytearray, 1))
 		return false;
 
 	memmove(bytearray->items+index*size+1*size, bytearray->items+index*size, (length*size-index*size)*sizeof(*bytearray->items));

@@ -12,7 +12,7 @@ void sleep_ms(unsigned int milliseconds)
 
 #if __STDC_VERSION__ >= 199901L
 #ifdef UINT32_MAX
-uint32_t ntoh32(uint32_t const net)
+uint32_t nethost32(uint32_t const net)
 {
 	uint8_t data[4];
 	memcpy(&data, &net, sizeof(data));

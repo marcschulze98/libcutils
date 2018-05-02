@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <cutils/common.h>
+#include <cutils/vector.h>
 
 typedef struct String
 {
@@ -16,7 +17,7 @@ typedef struct String
 } String;
 
 String* string_with_capacity(size_t capacity, bool null_terminated);
-void delete_string(String* string);
+void delete_string(void* string);
 
 HEDLEY_INLINE
 static char string_at(const String* string, size_t index)
@@ -49,10 +50,10 @@ static bool string_find_str(const String* haystack, const String* needle, size_t
 	return cutil_memmem(haystack->chars, haystack->length, needle->chars, needle->length, pos);
 }
 int string_cmp(const String* s1, const String* s2);
-
+int string_cmp_cstr(const String* s1, const char* s2);
 size_t string_count(const String* string, char character);
-
 bool string_concat(String* string, const String* other);
+Vector* string_split(const String* string, const char* set, bool null_terminated);
 
 String* from_cstring(const char* cstring, bool null_terminated);
 String* from_cstring_reuse(char* cstring, size_t capacity, bool null_terminated);
@@ -62,7 +63,7 @@ char* to_cstring_del(String* string);
 void string_move(String* dest, String* src);
 
 #define new_string(null_terminated) string_with_capacity(STRING_DEFAULT_SIZE, null_terminated)
-#define string_pop(string) string_pop_at(string, string->length-1)
-#define string_push(string, character) string_insert(string, string->length, character)
+#define string_pop(string) string_pop_at(string, ((String*)string)->length-1)
+#define string_push(string, character) string_insert(string, ((String*)string)->length, character)
 
 #endif /* CUTILS_DYN_STRING_H */

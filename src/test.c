@@ -72,6 +72,7 @@ static void test_string(void)
 	char* cstring;
 	size_t tmp;
 	int truth;
+	Vector* vec;
 
 	for(truth = false; truth == false || truth == true; truth++)
 	{
@@ -159,6 +160,18 @@ static void test_string(void)
 	assert(string_cmp(string, string2) > 0);
 	free(string);
 	free(string2);
+
+	string = from_cstring(" -hi1 hi2 hello3  ;  hi4!-!hi5- ", false);
+	vec = string_split(string, " ;-", true);
+	assert(vec->length == 5);
+	assert(string_cmp_cstr(vector_at(vec,0), "hi1") == 0);
+	assert(string_cmp_cstr(vector_at(vec,1), "hi2") == 0);
+	assert(string_cmp_cstr(vector_at(vec,2), "hello3") == 0);
+	assert(string_cmp_cstr(vector_at(vec,3), "hi4!") == 0);
+	assert(string_cmp_cstr(vector_at(vec,4), "!hi5") == 0);
+
+	delete_string(string);
+	delete_vector(vec, delete_string);
 
 }
 

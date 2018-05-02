@@ -31,7 +31,7 @@ typedef unsigned long long ullong;
 
 #if __STDC_VERSION__ >= 199901L
 	#ifdef UINT32_MAX
-		uint32_t ntoh32(uint32_t const net);
+		uint32_t nethost32(uint32_t const net);
 	#endif
 	HEDLEY_INLINE
 	static void memqswap_stack(void* item1, void* item2, size_t length)

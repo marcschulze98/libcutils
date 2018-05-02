@@ -55,7 +55,7 @@ size_t string_strip(String* string, char character)
 
 bool string_insert(String* string, size_t index, char character)
 {
-	if(index > string->length || !string_grow(string, 1))
+	if(!string_grow(string, 1))
 		return false;
 
 	memmove(string->chars+index+1, string->chars+index, (string->length-index+(string->null_terminated?1:0))*sizeof(*string->chars));
@@ -75,11 +75,12 @@ bool string_concat(String* string, const String* other)
 {
 	if(other->length == 0)
 		return true;
-	if(!string_grow(string, other->length-1))
+	if(!string_grow(string, other->length))
 		return false;
 	memcpy(string->chars+string->length,other->chars,other->length);
 	string->length += other->length;
-	string->chars[string->length] = '\0';
+	if(string->null_terminated)
+		string->chars[string->length] = '\0';
 	return true;
 }
 
@@ -104,6 +105,15 @@ int string_cmp(const String* s1, const String* s2)
 		return ret;
 }
 
+int string_cmp_cstr(const String* s1, const char* s2)
+{
+	int ret = memcmp(s1->chars, s2, s1->length < strlen(s2) ? s1->length : strlen(s2));
+	if(ret == 0 && s1->length != strlen(s2))
+		return s1->length < strlen(s2) ? -1 : 1;
+	else
+		return ret;
+}
+
 
 size_t string_count(const String* string, char character)
 {
@@ -114,6 +124,51 @@ size_t string_count(const String* string, char character)
 			ret++;
 	}
 	return ret;
+}
+
+Vector* string_split(const String* string, const char* set, bool null_terminated)
+{
+	#define CHECKRESULT(x) if(!x){delete_vector(ret, delete_string);return NULL;}
+	size_t i, currentvec = 0, currentlen = 0;
+	char c;
+	const char* orig = set;
+	String* tmp;
+	Vector* ret = new_vector();
+	bool is_delimiter = true;
+
+	if(!ret)
+		return NULL;
+
+	for(i = 0; i < string->length; i++)
+	{
+		for(c = *set++; c != '\0'; c = *set++)
+		{
+			if(string_at(string, i) == c)
+			{
+				is_delimiter = true;
+				currentlen = 0;
+				break;
+			} else {
+				is_delimiter = false;
+			}
+		}
+		if(!is_delimiter)
+			{
+				if(currentlen == 0)
+				{
+					tmp = new_string(null_terminated);
+					CHECKRESULT(tmp);
+					CHECKRESULT(vector_push(ret, tmp));
+					currentvec++;
+				}
+				currentlen++;
+				CHECKRESULT(string_push(vector_at(ret, currentvec-1), string_at(string, i)));
+			}
+		set = orig;
+	}
+
+	return ret;
+	#undef CHECKRESULT
 }
 
 bool string_grow(String* string, size_t add)
@@ -143,9 +198,9 @@ bool string_adjust_size(String* string, size_t size)
 }
 
 
-void delete_string(String* string)
+void delete_string(void* string)
 {
-	free(string->chars);
+	free(((String*)string)->chars);
 	free(string);
 }
 
@@ -178,6 +233,7 @@ String* from_cstring_reuse(char* cstring, size_t capacity, bool null_terminated)
 	string->chars = cstring;
 	string->length = strlen(cstring);
 	string->capacity = capacity;
+	string->null_terminated = null_terminated;
 
 	return string;
 }
