@@ -29,6 +29,15 @@ typedef unsigned long ulong;
 typedef unsigned long long ullong;
 #endif /* CUTILS_NO_SHORTHANDLES */
 
+#ifndef CUTILS_NO_MACROS
+#define MAX(x,y) ((x) > (y) ? (x) : (y))
+#define MIN(x,y) ((x) < (y) ? (x) : (y))
+#define LOOP while(1)
+#define RANGE(i, start, end)                                           \
+for(((i) = (start)); ((start) < (end)) ? ((i) < (end)) : ((i) > (end)); ((start) < (end)) ? (i++) : (i--))
+#endif /* CUTILS_NO_MACROS */
+
+
 #if __STDC_VERSION__ >= 199901L
 	#ifdef UINT32_MAX
 		uint32_t nethost32(uint32_t const net);

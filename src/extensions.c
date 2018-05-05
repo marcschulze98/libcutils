@@ -39,7 +39,7 @@ int cutil_strncasecmp(const char* s1, const char* s2, size_t n)
 	return c1 - c2;
 }
 
-size_t cutil_strnlen(const char *s, size_t maxlen)
+size_t cutil_strnlen(const char* s, size_t maxlen)
 {
 	size_t len;
 
@@ -51,23 +51,12 @@ size_t cutil_strnlen(const char *s, size_t maxlen)
 	return (len);
 }
 
-char* cutil_strdup(const char *s)
-{
-	char* ret;
-	size_t len = strlen(s);
-
-	ret = malloc(len+1);
-	memcpy(ret, s, len+1);
-
-	return ret;
-}
-
-char* cutil_strndup(const char *s, size_t n)
+char* cutil_strndup(const char* s, size_t n)
 {
 	char* ret;
 	size_t len = cutil_strnlen(s, n);
 
-	len = len <= n ? len : n;
+	len = MIN(len, n);
 
 	ret = malloc(len+1);
 	memcpy(ret, s, len+1);
@@ -77,25 +66,22 @@ char* cutil_strndup(const char *s, size_t n)
 
 bool cutil_memmem(const void* haystack, size_t haystacklen, const void* needle, size_t needlelen, size_t* pos)
 {
-	size_t i, j, tmp;
+	size_t i, j;
 	const byte* haystackb = haystack;
 	const byte* needleb = needle;
 
 
-	if (haystacklen == 0 || needlelen == 0)
+	if(HEDLEY_UNLIKELY(haystacklen == 0 || needlelen == 0 || haystacklen < needlelen))
 		return false;
-
+	//TODO: use memchr as base search
 	for(i = 0; i < haystacklen; i++)
 	{
-		for(j = 0, tmp = i; j < needlelen && i < haystacklen; j++, i++)
+		for(j = 0, *pos = i; j < needlelen && i < haystacklen; j++, i++)
 		{
 			if(haystackb[i] != needleb[j])
-			{
 				break;
-			} else if(j == needlelen-1){
-				*pos = tmp;
+			else if(j == needlelen-1)
 				return true;
-			}
 		}
 	}
 
@@ -114,6 +100,9 @@ int cutil_asprintf(char** strp, const char* format, ...)
 	va_end(ap);
 
 	*strp = malloc(needed);
+
+	if(!*strp)
+		return -1;
 
 	va_start(ap, format);
 	ret = snprintf(*strp, needed, format, ap);

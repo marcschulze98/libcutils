@@ -14,10 +14,10 @@
 int cutil_strcasecmp(const char* s1, const char* s2);
 int cutil_strncasecmp(const char* s1, const char* s2, size_t n);
 
-size_t cutil_strnlen(const char *s, size_t maxlen);
+size_t cutil_strnlen(const char* s, size_t maxlen);
 
-char* cutil_strdup(const char *s);
-char* cutil_strndup(const char *s, size_t n);
+#define cutil_strdup(s) cutil_strndup(s, strlen((const char*)s))
+char* cutil_strndup(const char* s, size_t n);
 
 bool cutil_memmem(const void* haystack, size_t haystacklen, const void* needle, size_t needlelen, size_t* pos);
 

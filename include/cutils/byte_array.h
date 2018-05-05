@@ -50,8 +50,8 @@ HEDLEY_NON_NULL(3)
 size_t* bytearray_find(const Bytearray* haystack, const void* needle, int (*cmp)(const void*, const void*));
 
 #define new_bytearray(element_size) bytearray_with_capacity(BYTEARRAY_DEFAULT_SIZE, element_size)
-#define bytearray_pop(bytearray, retptr) bytearray_pop_at(bytearray, ((Vector*)vector)->length-1, retptr)
-#define bytearray_push(bytearray, item) bytearray_insert(bytearray, ((Vector*)vector)->length, item)
+#define bytearray_pop(bytearray, retptr) bytearray_pop_at(bytearray, ((Bytearray*)bytearray)->length-1, retptr)
+#define bytearray_push(bytearray, item) bytearray_insert(bytearray, ((Bytearray*)bytearray)->length, item)
 
 #endif /* CUTILS_BYTE_ARRAY_H */
 
