@@ -79,20 +79,33 @@ bool sll_insert(LinkedList* ll, size_t index, void* item)
 		current = current->next;
 	}
 
-	if(current)
+
+	if(index == 0) /*first item*/
 	{
+		ll->head = newnode;
+		if(ll->length == 0) /* only item*/
+		{
+			ll->tail = newnode;
+			if(ll->circularly_linked)
+				newnode->next = newnode;
+			else
+				newnode->next = NULL;
+		} else { /*at least one other item after this*/
+			newnode->next = current;
+			if(ll->circularly_linked)
+				((SLnode*)ll->tail)->next = ll->head;
+		}
+	} else if(index < ll->length) { /*middle*/
+		prev->next = newnode;
 		newnode->next = current;
-		if(index == 0)
-			ll->head = newnode;
-		else
-			prev->next = newnode;
-	} else {
+	} else { /*end*/
 		ll->tail = newnode;
-		newnode->next = NULL;
-		if(index == 0)
-			ll->head = newnode;
-		if(prev)
-			prev->next = newnode;
+		prev->next = newnode;
+
+		if(ll->circularly_linked)
+			newnode->next = ll->head;
+		else
+			newnode->next = NULL;
 	}
 
 	ll->length++;
@@ -117,39 +130,53 @@ bool dll_insert(LinkedList* ll, size_t index, void* item)
 		current = current->sl.next;
 	}
 
-	if(current)
+	if(index == 0) /*first item*/
 	{
+		ll->head = newnode;
+		if(ll->length == 0) /* only item*/
+		{
+			ll->tail = newnode;
+			if(ll->circularly_linked)
+			{
+				newnode->prev = newnode;
+				newnode->sl.next = newnode;
+			} else {
+				newnode->prev = NULL;
+				newnode->sl.next = NULL;
+			}
+		} else { /* at least one other item after this*/
+			newnode->sl.next = current;
+			current->prev = newnode;
+			if(ll->circularly_linked)
+			{
+				((DLnode*)ll->tail)->sl.next = ll->head;
+				newnode->prev = ll->tail;
+			} else {
+				newnode->prev = NULL;
+			}
+		}
+	} else if(index < ll->length) { /*middle*/
+		prev->sl.next = newnode;
+		newnode->prev = prev;
 		newnode->sl.next = current;
-		if(index == 0)
-		{
-			ll->head = newnode;
-			newnode->prev = NULL;
-		} else {
-			prev->sl.next = newnode;
-			newnode->prev = prev;
-		}
 		current->prev = newnode;
-	} else {
+	} else { /*end*/
 		ll->tail = newnode;
-		newnode->sl.next = NULL;
-		if(index == 0)
-		{
-			ll->head = newnode;
-			newnode->prev = NULL;
-		}
-		if(prev)
-		{
-			prev->sl.next = newnode;
-			newnode->prev = prev;
-		}
+		prev->sl.next = newnode;
+		newnode->prev = prev;
 
+		if(ll->circularly_linked)
+		{
+			newnode->sl.next = ll->head;
+			((DLnode*)ll->head)->prev = newnode;
+		} else {
+			newnode->sl.next = NULL;
+		}
 	}
 
 	ll->length++;
 	return true;
 }
-
-
 
 void sll_remove(LinkedList* ll, size_t index, void (*rmv)(void*))
 {
@@ -168,13 +195,20 @@ void sll_remove(LinkedList* ll, size_t index, void (*rmv)(void*))
 	if(rmv)
 		rmv(current->item);
 
-	if(!current->next)
-		ll->tail = prev;
-
-	if(prev)
+	if(index == 0) /*beginning*/
+	{
+		if(ll->length == 1) /*only item*/
+		{
+			ll->head = ll->tail = NULL;
+		} else {
+			ll->head = current->next;
+			if(ll->circularly_linked && ll->tail) ((SLnode*)ll->tail)->next = ll->head;
+		}
+	} else { /*middle or ned*/
 		prev->next = current->next;
-	else
-		ll->head = current->next;
+		if(index == ll->length-1) /*at end*/
+			ll->tail = prev;
+	}
 
 	free(current);
 	ll->length--;
@@ -197,15 +231,30 @@ void dll_remove(LinkedList* ll, size_t index, void (*rmv)(void*))
 	if(rmv)
 		rmv(current->sl.item);
 
-	if(current->sl.next)
-		((DLnode*)(current->sl.next))->prev = prev;
-	else
-		ll->tail = prev;
-
-	if(prev)
+	if(index == 0) /* beginning*/
+	{
+		if(ll->length == 1) /*only item*/
+		{
+			ll->head = ll->tail = NULL;
+		} else {
+			ll->head = current->sl.next;
+			if(ll->circularly_linked && ll->tail)
+			{
+				((DLnode*)(current->sl.next))->prev = ll->tail;
+				((DLnode*)ll->tail)->sl.next = ll->head;
+			} else {
+				((DLnode*)(current->sl.next))->prev = NULL;
+			}
+		}
+	} else { /*middle or end*/
 		prev->sl.next = current->sl.next;
-	else
-		ll->head = current->sl.next;
+		if(index == ll->length-1) /*at end*/
+		{
+			ll->tail = prev;
+			if(ll->circularly_linked)
+				((DLnode*)(ll->head))->prev = ll->tail;
+		}
+	}
 
 	free(current);
 	ll->length--;
@@ -235,13 +284,34 @@ void sll_remove_range(LinkedList* ll, size_t index, size_t length, void (*rmv)(v
 		current = tmp;
 	}
 
-	if(!current)
-		ll->tail = prev;
-
-	if(prev)
-		prev->next = current;
-	else
+	if(index == 0) /* beginning */
 		ll->head = current;
+
+	if(index+length == ll->length) /* removed last item */
+	{
+		if(index == 0)
+		{
+			ll->head = NULL;
+			ll->tail = NULL;
+		} else {
+			ll->tail = prev;
+			if(ll->circularly_linked)
+			{
+				prev->next = ll->head;
+			} else {
+				prev->next = NULL;
+			}
+		}
+	} else {
+		if(index == 0)
+		{
+			ll->head = current;
+			if(ll->circularly_linked) ((SLnode*)(ll->tail))->next = ll->head;
+		} else {
+			prev->next = current;
+		}
+	}
+
 	ll->length -= length;
 }
 
@@ -267,17 +337,46 @@ void dll_remove_range(LinkedList* ll, size_t index, size_t length, void (*rmv)(v
 		free(current);
 		current = tmp;
 	}
-	if(current)
-		current->prev = prev;
-	else
-		ll->tail = prev;
 
-	if(prev)
+	if(index == 0) /* beginning */
 	{
-		prev->sl.next = current;
-	} else {
 		ll->head = current;
+		current->prev = ll->circularly_linked ? ll->tail : NULL;
 	}
+
+	if(index+length == ll->length) /* removed last item */
+	{
+		if(index == 0)
+		{
+			ll->head = NULL;
+			ll->tail = NULL;
+		} else {
+			ll->tail = prev;
+			if(ll->circularly_linked)
+			{
+				prev->sl.next = ll->head;
+				((DLnode*)(ll->head))->prev = ll->tail;
+			} else {
+				prev->sl.next = NULL;
+			}
+		}
+	} else {
+		if(index == 0)
+		{
+			ll->head = current;
+			if(ll->circularly_linked)
+			{
+				((SLnode*)(ll->tail))->next = ll->head;
+				current->prev = ll->tail;
+			} else {
+				current->prev = NULL;
+			}
+		} else {
+			prev->sl.next = current;
+			current->prev = prev;
+		}
+	}
+
 	ll->length -= length;
 }
 

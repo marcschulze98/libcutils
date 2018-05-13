@@ -98,7 +98,7 @@ bool string_find_char(const String* haystack, char needle, size_t* pos)
 
 int string_cmp(const String* s1, const String* s2)
 {
-	int ret = memcmp(s1->chars, s2->chars, s1->length < s2->length ? s1->length : s2->length);
+	int ret = memcmp(s1->chars, s2->chars, CUTIL_MIN(s1->length, s2->length));
 	if(ret == 0 && s1->length != s2->length)
 		return s1->length < s2->length ? -1 : 1;
 	else

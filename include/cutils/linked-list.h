@@ -12,7 +12,19 @@ typedef struct SLnode
 
 typedef struct DLnode
 {
-	struct SLnode sl;
+	#if __STDC_VERSION__ >= 201112L
+	union
+	{
+	#endif
+		struct SLnode sl;
+	#if __STDC_VERSION__ >= 201112L
+		struct
+		{
+			void* item;
+			void* next;
+		};
+	};
+	#endif
 	struct DLnode* prev;
 } DLnode;
 

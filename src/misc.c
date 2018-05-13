@@ -2,28 +2,13 @@
 
 void sleep_ms(unsigned int milliseconds)
 {
-    #ifdef __unix__
+  #ifdef __unix__
 		usleep(milliseconds * 1000);
 	#endif
 	#ifdef _WIN32
 		Sleep(milliseconds);
 	#endif
 }
-
-#if __STDC_VERSION__ >= 199901L
-#ifdef UINT32_MAX
-uint32_t nethost32(uint32_t const net)
-{
-	uint8_t data[4];
-	memcpy(&data, &net, sizeof(data));
-
-	return ((uint32_t) data[3] << 0)
-	     | ((uint32_t) data[2] << 8)
-	     | ((uint32_t) data[1] << 16)
-	     | ((uint32_t) data[0] << 24);
-}
-#endif
-#endif
 
 #if __STDC_VERSION__ >= 201112L
 
@@ -107,9 +92,4 @@ struct timespec timespec_add(const struct timespec* ts_1, const struct timespec*
     return res;
 }
 
-
-uintmax_t timespec_ms(const struct timespec* ts)
-{
-	return (uintmax_t)ts->tv_sec * 1000 + (uintmax_t)ts->tv_nsec/1000000;
-}
 #endif

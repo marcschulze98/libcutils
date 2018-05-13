@@ -367,7 +367,7 @@ int main(int argc, char** argv)
 	test_bitfuncs();
 
 	/* misc tests */
-	sleep_ms(1000);
+	sleep_ms(250);
 	assert(cutil_strcasecmp("ASD", "aSd") == 0);
 	assert(cutil_strcasecmp("BSD", "asd") > 0);
 	assert(cutil_strcasecmp("ASD", "bsd") < 0);
@@ -381,6 +381,7 @@ int main(int argc, char** argv)
 	assert(*(uintmax_t*)bytearray_at(bt, 312312) == 4444697);
 
 	delete_bytearray(bt, NULL);
+	puts(endianess_strings[check_endianess()]);
 
 	return 0;
 }

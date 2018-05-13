@@ -54,4 +54,3 @@ size_t* bytearray_find(const Bytearray* haystack, const void* needle, int (*cmp)
 #define bytearray_push(bytearray, item) bytearray_insert(bytearray, ((Bytearray*)bytearray)->length, item)
 
 #endif /* CUTILS_BYTE_ARRAY_H */
-

@@ -13,4 +13,3 @@ Bytearray* primesieve(uintmax_t limit);
 
 
 #endif /* CUTILS_MATH_H */
-

@@ -1,6 +1,8 @@
 #build directories
 build/
 
+#ide
+.atom*
 
 # Prerequisites
 *.d

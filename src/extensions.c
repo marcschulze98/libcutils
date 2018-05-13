@@ -56,9 +56,11 @@ char* cutil_strndup(const char* s, size_t n)
 	char* ret;
 	size_t len = cutil_strnlen(s, n);
 
-	len = MIN(len, n);
+	len = CUTIL_MIN(len, n);
 
 	ret = malloc(len+1);
+	if(!ret)
+		return NULL;
 	memcpy(ret, s, len+1);
 
 	return ret;
@@ -70,8 +72,10 @@ bool cutil_memmem(const void* haystack, size_t haystacklen, const void* needle, 
 	const byte* haystackb = haystack;
 	const byte* needleb = needle;
 
+	if(needlelen == 0)
+		return true;
 
-	if(HEDLEY_UNLIKELY(haystacklen == 0 || needlelen == 0 || haystacklen < needlelen))
+	if(HEDLEY_UNLIKELY((haystacklen == 0 && needlelen != 0 )|| haystacklen < needlelen))
 		return false;
 	//TODO: use memchr as base search
 	for(i = 0; i < haystacklen; i++)
