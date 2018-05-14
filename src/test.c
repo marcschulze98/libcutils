@@ -108,11 +108,44 @@ static void test_string(void)
 		delete_string(string2);
 		delete_string(string);
 
-		string = from_cstring("abcd", truth);
-		string2 = from_cstring("cd", truth);
+		string = from_cstring("abababcd", truth);
+		string2 = from_cstring("ababcd", truth);
 		assert(string_find_str(string, string2, &tmp));
 		assert(tmp == 2);
+		delete_string(string2);
+		delete_string(string);
 
+		string = from_cstring("abab", truth);
+		string2 = from_cstring("abc", truth);
+		assert(!string_find_str(string, string2, &tmp));
+		delete_string(string2);
+		delete_string(string);
+
+		string = from_cstring("abababcd", truth);
+		string2 = from_cstring("ab", truth);
+		assert(string_find_str(string, string2, &tmp));
+		assert(tmp == 0);
+		delete_string(string2);
+		delete_string(string);
+
+		string = from_cstring("ABC ABCDAB ABCDABCDABDE", truth);
+		string2 = from_cstring("ABCDABD", truth);
+		assert(string_find_str(string, string2, &tmp));
+		assert(tmp == 15);
+		delete_string(string2);
+		delete_string(string);
+
+		string = from_cstring("asdasdasdasdp", truth);
+		string2 = from_cstring("p", truth);
+		assert(string_find_str(string, string2, &tmp));
+		assert(tmp == 12);
+		delete_string(string2);
+		delete_string(string);
+
+		string = from_cstring("asdpsdasdasdpa", truth);
+		string2 = from_cstring("pa", truth);
+		assert(string_find_str(string, string2, &tmp));
+		assert(tmp == 12);
 		delete_string(string2);
 		delete_string(string);
 
@@ -385,3 +418,4 @@ int main(int argc, char** argv)
 
 	return 0;
 }
+/* TODO: split up test files */

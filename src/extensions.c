@@ -68,26 +68,58 @@ char* cutil_strndup(const char* s, size_t n)
 
 bool cutil_memmem(const void* haystack, size_t haystacklen, const void* needle, size_t needlelen, size_t* pos)
 {
-	size_t i, j;
+	size_t newoffset, offset = 0, i, j;
 	const byte* haystackb = haystack;
 	const byte* needleb = needle;
+	byte* start;
+	bool newoffset_set = false;
 
 	if(needlelen == 0)
-		return true;
-
-	if(HEDLEY_UNLIKELY((haystacklen == 0 && needlelen != 0 )|| haystacklen < needlelen))
-		return false;
-	//TODO: use memchr as base search
-	for(i = 0; i < haystacklen; i++)
 	{
-		for(j = 0, *pos = i; j < needlelen && i < haystacklen; j++, i++)
+		*pos = 0;
+		return true;
+	}
+
+	if(HEDLEY_UNLIKELY((haystacklen == 0 && needlelen > 0 )|| haystacklen < needlelen))
+		return false;
+
+	CUTIL_LOOP
+	{
+		start = memchr(haystackb+offset, needleb[0], haystacklen-offset);
+		if(!start)
 		{
+			return false;
+		} else if(needlelen == 1) {
+			*pos = (size_t)(start-haystackb);
+			return true;
+		}
+
+		for(i = (size_t)(start-haystackb+1), j = 1; i < haystacklen && j < needlelen; i++, j++)
+		{
+			if(!newoffset_set && haystackb[i] == needleb[0])
+			{
+				newoffset = i;
+				newoffset_set = true;
+			}
+
 			if(haystackb[i] != needleb[j])
+			{
 				break;
-			else if(j == needlelen-1)
+			} else if(j == needlelen-1) {
+				*pos = (size_t)(start-haystackb);
 				return true;
+			}
+		}
+
+		if(newoffset_set)
+		{
+			offset = newoffset;
+			newoffset_set = false;
+		} else {
+			offset = i;
 		}
 	}
+
 
 	return false;
 }
